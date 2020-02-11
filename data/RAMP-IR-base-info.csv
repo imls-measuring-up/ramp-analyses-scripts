@@ -1,5 +1,5 @@
 ir_index_root,ir_page_click_index,ir_access_info_index,Institution,Repository Name,URL,Items in repository on 2019-05-27,Type,Platform,Item Count Method,ETD on 2019-06-07,GS site operator 2019-06-07
-swarthmore_inst-schol,swarthmore_inst-schol_page_clicks,swarthmore_inst-schol_access_info,Bryn Mawr College/Haverford College/Swarthmore College,TriCollege Libraries IR,https://scholarship.tricolib.brynmawr.edu,8728,Consortium,DSpace,Title browse,,
+swarthmore_inst-schol,swarthmore_inst-schol_page_clicks,swarthmore_inst-schol_access_info,Bryn Mawr College/Haverford College/Swarthmore College,TriCollege Libraries IR,https://scholarship.tricolib.brynmawr.edu,8728,Consortium,DSpace,Title browse,.,.
 caltech_authors,caltech_authors_page_clicks,caltech_authors_access_info,Caltech (Authors),Caltech Authors,https://authors.library.caltech.edu,81000,University,EPrints 3,Website,23,7900
 caltech_thesis,caltech_thesis_page_clicks,caltech_thesis_access_info,Caltech (ETD),CaltechTHESIS,https://thesis.library.caltech.edu,9814,University,EPrints 3,Summed numbers on Browse by Degree/Thesis Type page,9874,6950
 colorado,colorado_page_clicks,colorado_access_info,Colorado/Wyoming,Mountain Scholar,https://mountainscholar.org,71708,Consortium,DSPace,Title browse,5846,20200
@@ -10,10 +10,10 @@ mcmaster,mcmaster_page_clicks,mcmaster_access_info,McMaster University,MacSphere
 montana,montana_page_clicks,montana_access_info,Montana State University,Montana State ScholarWorks,https://scholarworks.montana.edu,14381,University,DSpace,Title browse,10492,10600
 northeastern,northeastern_page_clicks,northeastern_access_info,Northeastern University,Digital Repository Service,https://repository.library.northeastern.edu,5446,University,Fedora/Samvera,Summed numbers on Featured Content page,3877,2040
 nku,nku_page_clicks,nku_access_info,Northern Kentucky University,NKU Digital Repository,https://dspace.nku.edu,2420,University,DSpace,Title browse,17,645
-viurr,viurr_page_clicks,viurr_access_info,Royal Roads University/Vancouver Island University,VIURRSpace,https://viurrspace.ca,10366,Consortium,DSpace,Title browse,,2700
+viurr,viurr_page_clicks,viurr_access_info,Royal Roads University/Vancouver Island University,VIURRSpace,https://viurrspace.ca,10366,Consortium,DSpace,Title browse,.,2700
 rutgers,rutgers_page_clicks,rutgers_access_info,Rutgers University,Rucore (Rutgers),https://rucore.libraries.rutgers.edu,43008,University,Fedora,Blank search,8103,13300
 shsu_ir,shsu_ir_page_clicks,shsu_ir_access_info,Sam Houston State University,Scholarly Works @ SHSU,https://shsu-ir.tdl.org,2095,University,DSpace,Title browse,271,2010
-swarthmore,swarthmore_page_clicks,swarthmore_access_info,Swarthmore College,Swarthmore Works,https://works.swarthmore.edu,11095,University,Digital Commons,Website,,
+swarthmore,swarthmore_page_clicks,swarthmore_access_info,Swarthmore College,Swarthmore Works,https://works.swarthmore.edu,11095,University,Digital Commons,Website,.,.
 epsilon,epsilon_page_clicks,epsilon_access_info,Swedish University of Agricultural Sciences,Epsilon Open Archive,https://pub.epsilon.slu.se,9307,University,Eprints 3,BASE,8269,6700
 epsilon_students,epsilon_students_page_clicks,epsilon_students_access_info,Swedish University of Agricultural Sciences,Epsilon Archive for Student Projects,https://stud.epsilon.slu.se/cgi/stats/report,11895,University,EPrints 3,Items listed on statistics browse page,11895,11700
 univ_kentucky,univ_kentucky_page_clicks,univ_kentucky_access_info,University of Kentucky,Uknowledge (U Kentucky),https://uknowledge.uky.edu,34196,University,Digital Commons,Website,3100,19800
@@ -27,7 +27,7 @@ shareok,shareok_page_clicks,shareok_access_info,University of Oklahoma/Oklahoma 
 ds_pitt,ds_pitt_page_clicks,ds_pitt_access_info,University of Pittsburgh,D-Scholarship@Pitt,http://d-scholarship.pitt.edu,21358,University,EPrints 3,Website,9583,11900
 uop_pearl,uop_pearl_page_clicks,uop_pearl_access_info,University of Plymouth,PEARL (U Plymouth),https://pearl.plymouth.ac.uk,9903,University,DSpace,Title browse,2586,4740
 strathprints,strathprints_page_clicks,strathprints_access_info,University of Strathclyde,Strathprints,https://strathprints.strath.ac.uk,51386,University,Eprints 3,Statistics page,124,8570
-ut_austin,ut_austin_page_clicks,ut_austin_access_info,University of Texas at Austin,Texas ScholarWorks,https://repositories.lib.utexas.edu,60359,University,Dspace,Title browse,,
+ut_austin,ut_austin_page_clicks,ut_austin_access_info,University of Texas at Austin,Texas ScholarWorks,https://repositories.lib.utexas.edu,60359,University,Dspace,Title browse,.,.
 w_cape_repo,w_cape_repo_page_clicks,w_cape_repo_access_info,University of the Western Cape,Western Cape Research Respository,https://repository.uwc.ac.za,3640,University,Dspace,Title browse,0,997
 w_cape_etd,w_cape_etd_page_clicks,w_cape_etd_access_info,University of the Western Cape,Western Cape ETD Repository,http://etd.uwc.ac.za/xmlui//,5143,University,DSpace,Title browse,5182,4990
 u_waterloo,u_waterloo_page_clicks,u_waterloo_access_info,University of Waterloo,UWSpace (U Waterloo),https://uwspace.uwaterloo.ca,13021,University,DSpace,Title browse,11657,11500

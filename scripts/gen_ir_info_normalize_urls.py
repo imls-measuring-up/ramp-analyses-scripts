@@ -15,18 +15,21 @@ RAMP, as well as manually collected data including the count of items in each IR
 were collected between May 27 and June 7, 2019. If this script was downloaded or cloned
 from the ramp-analysis-scripts GitHub repository at
 <https://github.com/imls-measuring-up/ramp-analyses-scripts>, then the "RAMP-IR-base-info.csv"
-file should be in the repository's "data" directory. Column definitions for this file
+file should be in the repository's "ir_data" directory. Column definitions for this file
 are provided in the "RAMP_IR_base_info_column_definitions.md" file, which is also
-included in the GitHub repository.
+included in the GitHub repository, in the "ir_data" directory.
 
 3. RAMP data: A subset of RAMP data for the IR listed in the "RAMP-IR-base-info.csv" file
 has been published at Dryad: <https://doi.org/10.5061/dryad.fbg79cnr0>. The data are too
 large to be included in the GitHub repository, but the repository includes an empty
 directory, 'ramp_data.' The data should be downloaded from Dryad into the 'ramp_data'
-folder. Dataset documentation are included in the item record in Dryad.
+directory. Dataset documentation are included in the item record in Dryad.
 
 This script will output a CSV file, "RAMP-IR-info_YYYY-MM-DD.csv," where "YYYY-MM-DD"
-will be the date on which the script is run.
+will be the date on which the script is run. Brief output file column definitions are
+provided inline below, but additional documentation is provided in the
+"RAMP_summary_stats_documentation.md" file included in the GitHub repository, in the
+"results" directory.
 
 """
 
@@ -43,23 +46,32 @@ import re
 
 
 def make_dspace_html_url(bitstream_url):
-    """Brief description of what this function does
+    """For DSpace IR, generate a URL for an HTML page that contains a bitstream
+       that has a positive click count in RAMP. Basically, this function attempts
+       to infer or reverse-engineer the URL of a bitstream's parent HTML page
+       using the bistream's URL. For DSpace IR this requires extracting the item's
+       Handle from the bitstream URL and inserting it into an item URL.
 
     Parameters
     ----------
 
     bitstream_url:
-        What this is
+        The URL of a DSpace bitstream with a positive click count in RAMP.
 
     Returns
     -------
 
-    object
-        What the object is
+    An HTML URL:
+        The URL of the HTML page ("item") that includes the bitstream.
+        
     """
     
     p = urlparse(bitstream_url)
+
+    # Compile a regular expression to find the DSpace handle in the bitstream URL.
     handle = re.compile("\/[0-9\?\.]+\/[0-9][0-9]+")
+
+    # Search the bitstream URL for the UI type.
     xmlui = re.compile('xmlui')
     jspui = re.compile('jspui')
     dspace = re.compile('dspace')
@@ -67,6 +79,8 @@ def make_dspace_html_url(bitstream_url):
     x = xmlui.search(p.path)
     j = jspui.search(p.path)
     d = dspace.search(p.path)
+
+    # Construct and return the item HTML page.
     if h:
         if j:
             return p.scheme + '://' + p.netloc + '/' + 'jspui' + '/' + 'handle' + h.group()
@@ -79,14 +93,58 @@ def make_dspace_html_url(bitstream_url):
 
 
 def make_eprints_fedora_html_url(pdf_url):
+    """For EPrints and Fedora IR, generate a URL for an HTML page that contains a content file
+       that has a positive click count in RAMP. Basically, this function attempts
+       to infer or reverse-engineer the URL of a file's parent HTML page
+       using the file's URL. For EPrints and Fedora IR this requires extracting the item's
+       internal ID number from the content file URL and inserting it into an item URL.
+       Note that for EPrints and Fedora IR, RAMP is currently only filtering activity
+       on PDF files, and does not filter activity on other content file types.
+
+    Parameters
+    ----------
+
+    pdf_url:
+        The URL of a PDF URL with a positive click count in RAMP.
+
+    Returns
+    -------
+
+    An HTML URL:
+        The URL of the HTML page ("item") that includes the PDF URL.
+        
+    """
+
     p = urlparse(pdf_url)
+
+    # Compile a regular expression to find the internal ID numberof the item.
     pdf_path = re.compile("\/[0-9][0-9]+")
     pdf_id = pdf_path.search(p.path)
+
+    # Construct and return the item HTML page.
     if pdf_id:
         return p.scheme + '://' + p.netloc + pdf_id.group()
 
 
 def make_fedora_ne_html_url(pdf_url):
+    """This function is the same as make_eprints_fedora_html_url,
+       but the regular expression is modified to include a
+       specific prefix.
+
+    Parameters
+    ----------
+
+    pdf_url:
+        The URL of a PDF URL with a positive click count in RAMP.
+
+    Returns
+    -------
+
+    An HTML URL:
+        The URL of the HTML page ("item") that includes the PDF URL.
+        
+    """
+
     p = urlparse(pdf_url)
     pdf_path = re.compile("\/files\/neu:[a-z0-9]+")
     pdf_id = pdf_path.search(p.path)
@@ -95,6 +153,29 @@ def make_fedora_ne_html_url(pdf_url):
 
 
 def make_bepress_ccd_urls(pdf_url):
+    """For BePress Digital Commons IR, generate an OAI-PMH identifier (UID) for an item
+       that contains a content file
+       that has a positive click count in RAMP. Basically, this function attempts
+       to infer or reverse-engineer the OAI-PMH UID of a file's parent HTML page
+       using the file's URL. For Digital Commons IR this requires extracting the item's
+       'context' and 'article' ID numbers from the content file URL and inserting
+       them into an OAI-PMH UID.
+
+    Parameters
+    ----------
+
+    pdf_url:
+        The URL of a PDF URL with a positive click count in RAMP.
+
+    Returns
+    -------
+
+    An OAI-PMH UID:
+        A UID that can be used to make an OAI-PMH request for the item that
+        contains the content file.
+        
+    """
+
     p = urlparse(pdf_url)
     base_url = 'oai:' + p.netloc + ':'
     contextRe = re.compile(r'context=([a-z0-9_\-]*)')
@@ -109,6 +190,30 @@ def make_bepress_ccd_urls(pdf_url):
 
 
 def construct_html_urls(ir_data, platform):
+    """This is a helper function that take RAMP data for a single IR
+       and passes it to the appropriate function for building the
+       HTML URLs of item pages containing content files with positive click
+       values in RAMP. 
+       
+
+    Parameters
+    ----------
+
+    ir_data:
+        A pandas data frame containing RAMP data for a single IR.
+    platform:
+        The IR's software platform.
+
+    Returns
+    -------
+
+    ir_data:
+        The IR data is returned with a new column, 'html_url.' For each row,
+        this is the URL of the HTML page of the item containing the content
+        file URL referenced by the 'url' column in RAMP.
+        
+    """
+
     if platform == 'DSpace':
         ir_data['html_url'] = ir_ramp_data['url'].apply(make_dspace_html_url)
     if platform == 'EPrints 3':
@@ -121,27 +226,33 @@ def construct_html_urls(ir_data, platform):
         ir_data['html_url'] = ir_ramp_data['url'].apply(make_bepress_ccd_urls)
     return ir_data
 
+# Set paths to data and output directories. Update as needed.
+data_dir = '../ir_data/'
+ramp_data_dir = '../ramp_data/'
+results_dir = '../results/'
 
-data_dir = '../data/'
-# ramp_data_dir = data_dir + 'ramp_raw/'
-ramp_data_dir = '../data/published_data/'
-# out_dir = data_dir + 'out/'
-
+# Create a list to hold the names of individual RAMP data files.
 click_data_files = []
-
 for r, d, n in os.walk(ramp_data_dir):
     for f in n:
         if fnmatch.fnmatch(f, '*page-clicks*'):
             fname = os.path.join(r, f)
             click_data_files.append(fname)
 
+# Read the first RAMP data file. 
 ramp_data = pd.read_csv(click_data_files[0])
 
+# Read the other RAMP data files. Since these files are large and can take
+# some time to load, the next two lines can be commented out to run the rest
+# of this script on one file for testing and debugging purposes.
 for f in click_data_files[1:]:
     ramp_data = ramp_data.append(pd.read_csv(f))
 
-ir_info = pd.read_csv(data_dir + 'RAMP-IR-info.csv')
+# Read the file with the manually collected data about IR size, platform,
+# country, etc.
+ir_info = pd.read_csv(data_dir + 'RAMP-IR-base-info.csv')
 
+# Define the columns that for the output data frame and file.
 cols = ['ir',                                            # ir_index_root
         'pc_index',                                      # ir_page_click_index
         'ai_index',                                      # ir_access_info_index
@@ -182,7 +293,9 @@ cols = ['ir',                                            # ir_index_root
         'ctEtd',                                         # ETD on 2019-06-07
         'gsSO']                                          # GS site operator 2019-06-07
 
+# Create the data frame to store the summary statistics.
 outDf = pd.DataFrame(columns=cols)
+
 
 for i, r in ir_info.iterrows():
     ir = r['ir_index_root']
@@ -245,5 +358,5 @@ for i, r in ir_info.iterrows():
                          irPlat, ctMethod, ctEtd, gsSO]], columns=cols)
     outDf = outDf.append(tdf)
 
-outDf.to_csv(data_dir + "RAMP-IR-info_2020-01-09.csv", index=False)
+outDf.to_csv(results_dir + "RAMP_summary_stats_" + 'insert date'  + ".csv", index=False)
 

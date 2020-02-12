@@ -1,11 +1,63 @@
+"""Generate RAMP IR Use Ratio and Summary Stats for Jan 1 - May 31, 2019
+
+This script generates summary statistics of IR search engine performance data
+as reported by Google and harvested by the RAMP application. It also cross-
+references RAMP data with manually collected data about IR to calculate
+the use ratio and other analyses described in Arlitsch et al., 2020 (in review).
+
+Dependencies:
+
+1. Python pandas, available from <https://pandas.pydata.org/>. Should be installed
+in the Python environment in which this script will be run.
+
+2. "RAMP-IR-base-info.csv": This file contains some IR specific configuration data from
+RAMP, as well as manually collected data including the count of items in each IR. The data
+were collected between May 27 and June 7, 2019. If this script was downloaded or cloned
+from the ramp-analysis-scripts GitHub repository at
+<https://github.com/imls-measuring-up/ramp-analyses-scripts>, then the "RAMP-IR-base-info.csv"
+file should be in the repository's "data" directory. Column definitions for this file
+are provided in the "RAMP_IR_base_info_column_definitions.md" file, which is also
+included in the GitHub repository.
+
+3. RAMP data: A subset of RAMP data for the IR listed in the "RAMP-IR-base-info.csv" file
+has been published at Dryad: <https://doi.org/10.5061/dryad.fbg79cnr0>. The data are too
+large to be included in the GitHub repository, but the repository includes an empty
+directory, 'ramp_data.' The data should be downloaded from Dryad into the 'ramp_data'
+folder. Dataset documentation are included in the item record in Dryad.
+
+This script will output a CSV file, "RAMP-IR-info_YYYY-MM-DD.csv," where "YYYY-MM-DD"
+will be the date on which the script is run.
+
+"""
+
+
 import pandas as pd
+
 import os
+
 import fnmatch
+
 from urllib.parse import urlparse
+
 import re
 
 
 def make_dspace_html_url(bitstream_url):
+    """Brief description of what this function does
+
+    Parameters
+    ----------
+
+    bitstream_url:
+        What this is
+
+    Returns
+    -------
+
+    object
+        What the object is
+    """
+    
     p = urlparse(bitstream_url)
     handle = re.compile("\/[0-9\?\.]+\/[0-9][0-9]+")
     xmlui = re.compile('xmlui')

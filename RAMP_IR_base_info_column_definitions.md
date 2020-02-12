@@ -2,7 +2,7 @@
 
 The file, _RAMP-IR-base-info.csv_, contains data about RAMP participating IR that were be used to augment RAMP data for the anaylses described in Arlitsch, et al., 2020 (in review). These data were collected manually at the end of May, 2019. Information about index names specific to each IR's RAMP data have been added from an internal RAMP configuration file. These index names allow the data in this file to be cross referenced with RAMP data.
 
-Data were compiled for 35 RAMP participating IR. This is a subset of RAMP participants.
+Data were compiled for 35 IR that were registered with RAMP during the period of January 1, 2019 - May 31, 2019. This is a subset of the total number of RAMP participants.
 
 A detailed description of RAMP data and data processing is provided in the published subset of RAMP data:
 
@@ -100,9 +100,11 @@ A detailed description of RAMP data and data processing is provided in the publi
 
 > Data type: integer
 
-> Description: 
+> Description: The SITE operator can be used with Google search engines to elicit a very rough count of the number items that Google has indexed from a given website or repository. It should not be used to assume anything more than an approximate count. The search command is "site:repository.institution.domain." Null values are represented by a decimal point.
 
-> Data source: These data were collected manually from IR and institutional websites.
+> Example: site.scholarworks.montana.edu
+
+> Data source: These data were collected manually from Google search engines.
 
 
 

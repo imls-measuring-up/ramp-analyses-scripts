@@ -1,5 +1,7 @@
+## Load the RIO package.
+## Read the csv file with base IR info.
 library(rio)
-IR <- import("RAMP-IR-info_2020-01-09.xlsx")
+IR <- import("../ir_data/RAMP_IR_base_info.csv")
 str(IR)
 # Items in repository
 length(IR$ir)

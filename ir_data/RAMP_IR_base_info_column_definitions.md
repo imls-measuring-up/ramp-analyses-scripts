@@ -1,5 +1,7 @@
 # Data Table Definitions for the _RAMP-IR-base-info.csv_ file
 
+#### GitHub repository URL: <https://github.com/imls-measuring-up/ramp-analyses-scripts>
+
 The file, _RAMP-IR-base-info.csv_, contains data about RAMP participating IR that were be used to augment RAMP data for the anaylses described in Arlitsch, et al., 2020 (in review). These data were collected manually at the end of May, 2019. Information about index names specific to each IR's RAMP data have been added from an internal RAMP configuration file. These index names allow the data in this file to be cross referenced with RAMP data.
 
 Data were compiled for 35 IR that were registered with RAMP during the period of January 1, 2019 - May 31, 2019. This is a subset of the total number of RAMP participants.
@@ -38,7 +40,7 @@ A detailed description of RAMP data and data processing is provided in the publi
 
 > Data type: string
 
-> Description: The name(s) of the instution or consortia members operating the IR.
+> Description: The name(s) of the institution or consortia members operating the IR.
 
 > Data source: These data were collected manually from IR and institutional websites.
 

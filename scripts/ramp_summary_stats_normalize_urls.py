@@ -1,5 +1,7 @@
 """Generate RAMP IR Use Ratio and Summary Stats for Jan 1 - May 31, 2019
 
+GitHub repository URL: <https://github.com/imls-measuring-up/ramp-analyses-scripts>
+
 This script generates summary statistics of IR search engine performance data
 as reported by Google and harvested by the RAMP application. It also cross-
 references RAMP data with manually collected data about IR to calculate

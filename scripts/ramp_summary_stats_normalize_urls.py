@@ -277,11 +277,11 @@ ramp_subset['2019-05_RAMP_subset_country-device-info.csv'] = ramp_201905_ai
 ramp_subset['2019-05_RAMP_subset_page-clicks_v2.csv'] = ramp_201905_pc
 
 # Download the data and save to the 'ramp_data' directory.
-#for file_name, file_pointer in ramp_subset.items():
-#    r = requests.get(file_pointer, stream=True)
-#    with open(ramp_data_dir + file_name, 'wb') as dl:
-#        for chunk in r.iter_content(chunk_size=512):
-#            dl.write(chunk)
+for file_name, file_pointer in ramp_subset.items():
+    r = requests.get(file_pointer, stream=True)
+    with open(ramp_data_dir + file_name, 'wb') as dl:
+        for chunk in r.iter_content(chunk_size=512):
+            dl.write(chunk)
 
 # Create a list to hold the names of individual RAMP data files.
 # Note that only page-click data are being used here.

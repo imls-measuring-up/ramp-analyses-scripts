@@ -88,7 +88,7 @@ def make_dspace_html_url(bitstream_url):
     h = handle.search(p.path)
     x = xmlui.search(p.path)
     j = jspui.search(p.path)
-    d = dspace.search(p.path)
+    ds = dspace.search(p.path)
 
     # Construct and return the item HTML page.
     if h:
@@ -96,7 +96,7 @@ def make_dspace_html_url(bitstream_url):
             return p.scheme + '://' + p.netloc + '/' + 'jspui' + '/' + 'handle' + h.group()
         elif x:
             return p.scheme + '://' + p.netloc + '/' + 'xmlui' + '/' + 'handle' + h.group()
-        elif d:
+        elif ds:
             return p.scheme + '://' + p.netloc + '/' + 'dspace' + '/' + 'handle' + h.group()
         else:
             return p.scheme + '://' + p.netloc + '/' + 'handle' + h.group()
@@ -275,11 +275,11 @@ ramp_subset['2019-05_RAMP_subset_country-device-info.csv'] = ramp_201905_ai
 ramp_subset['2019-05_RAMP_subset_page-clicks_v2.csv'] = ramp_201905_pc
 
 # Download the data and save to the 'ramp_data' directory.
-for file_name, file_pointer in ramp_subset.items():
-    r = requests.get(file_pointer, stream=True)
-    with open(ramp_data_dir + file_name, 'wb') as dl:
-        for chunk in r.iter_content(chunk_size=512):
-            dl.write(chunk)
+#for file_name, file_pointer in ramp_subset.items():
+#    r = requests.get(file_pointer, stream=True)
+#    with open(ramp_data_dir + file_name, 'wb') as dl:
+#        for chunk in r.iter_content(chunk_size=512):
+#            dl.write(chunk)
 
 # Create a list to hold the names of individual RAMP data files.
 # Note that only page-click data are being used here.
@@ -356,67 +356,71 @@ Variables are defined in the data table definitions for the output file describe
 statistical functions.
 """
 for i, r in ir_info.iterrows():
-    ir = r['ir_index_root']
-    pc_index = r['ir_page_click_index']
-    ai_index = r['ir_access_info_index']
-    inst = r['Institution']
-    repoName = r['Repository Name']
-    rURL = r['URL']
-    countItems = r['Items in repository on 2019-05-27']
-    ir_ramp_data = ramp_data[(ramp_data['index'] == pc_index) &
-                             (ramp_data['citableContent'] == 'Yes') &
-                             (ramp_data['clicks'] > 0)].copy()
-    """
-    Deduplicate item URLs. A more detailed definition of what an "item"
-    is in this context is included in the data table definitions
-    for the output file. See "RAMP_summary_stats_documentation.md."
-    """
-    ir_ramp_data = construct_html_urls(ir_ramp_data, r['Platform'])
-    countCcdUrls = len(pd.unique(ir_ramp_data['url']))
-    countItemUrls = len(pd.unique(ir_ramp_data['html_url']))
-    useRatio = round(countItemUrls / countItems, 2)
-    sumCcd = ir_ramp_data['clicks'].sum()
-    ccdAgg = ir_ramp_data.groupby('url').agg({'clicks': 'sum'})
-    ccdAggSum = ccdAgg['clicks'].sum()
-    ccdAggDesc = ccdAgg.describe()
-    ccdAggCount = ccdAggDesc.loc['count'][0]
-    ccdAggMean = ccdAggDesc.loc['mean'][0]
-    ccdAggStd = ccdAggDesc.loc['std'][0]
-    ccdAggMin = ccdAggDesc.loc['min'][0]
-    ccdAgg25 = ccdAggDesc.loc['25%'][0]
-    ccdAgg50 = ccdAggDesc.loc['50%'][0]
-    ccdAgg75 = ccdAggDesc.loc['75%'][0]
-    ccdAggMax = ccdAggDesc.loc['max'][0]
-    itemAgg = ir_ramp_data.groupby('html_url').agg({'clicks': 'sum'})
-    itemAggSum = itemAgg['clicks'].sum()
-    itemAggDesc = itemAgg.describe()
-    itemAggCount = itemAggDesc.loc['count'][0]
-    itemAggMean = itemAggDesc.loc['mean'][0]
-    itemAggStd = itemAggDesc.loc['std'][0]
-    itemAggMin = itemAggDesc.loc['min'][0]
-    itemAgg25 = itemAggDesc.loc['25%'][0]
-    itemAgg50 = itemAggDesc.loc['50%'][0]
-    itemAgg75 = itemAggDesc.loc['75%'][0]
-    itemAggMax = itemAggDesc.loc['max'][0]
-    serp1Df = ir_ramp_data[ir_ramp_data['position'] <= 10]
-    serp1 = len(serp1Df)
-    serp1CcdSum = serp1Df['clicks'].sum()
-    serp100Df = ir_ramp_data[ir_ramp_data['position'] <= 1000]
-    serp100 = len(serp100Df)
-    serp100CcdSum = serp100Df['clicks'].sum()
-    irCountry = r['Country']
-    irType = r['Type']
-    irPlat = r['Platform']
-    ctMethod = r['Item Count Method']
-    ctEtd = r['ETD on 2019-06-07']
-    gsSO = r['GS site operator 2019-06-07']
-    tdf = pd.DataFrame([[ir, pc_index, ai_index, inst, repoName, rURL, countItems, countCcdUrls, countItemUrls,
-                         useRatio, sumCcd, ccdAggSum, ccdAggCount, ccdAggMean, ccdAggStd, ccdAggMin, ccdAgg25,
-                         ccdAgg50, ccdAgg75, ccdAggMax, itemAggSum, itemAggCount, itemAggMean, itemAggStd,
-                         itemAggMin, itemAgg25, itemAgg50, itemAgg75, itemAggMax,
-                         serp1, serp1CcdSum, serp100, serp100CcdSum, irCountry, irType,
-                         irPlat, ctMethod, ctEtd, gsSO]], columns=cols)
-    outDf = outDf.append(tdf)
+    try:
+        ir = r['ir_index_root']
+        pc_index = r['ir_page_click_index']
+        ai_index = r['ir_access_info_index']
+        inst = r['Institution']
+        repoName = r['Repository Name']
+        rURL = r['URL']
+        countItems = r['Items in repository on 2019-05-27']
+        ir_ramp_data = ramp_data[(ramp_data['index'] == pc_index) &
+                                (ramp_data['citableContent'] == 'Yes') &
+                                (ramp_data['clicks'] > 0)].copy()
+        """
+        Deduplicate item URLs. A more detailed definition of what an "item"
+        is in this context is included in the data table definitions
+        for the output file. See "RAMP_summary_stats_documentation.md."
+        """
+        ir_ramp_data = construct_html_urls(ir_ramp_data, r['Platform'])
+        countCcdUrls = len(pd.unique(ir_ramp_data['url']))
+        countItemUrls = len(pd.unique(ir_ramp_data['html_url']))
+        useRatio = round(countItemUrls / countItems, 2)
+        sumCcd = ir_ramp_data['clicks'].sum()
+        ccdAgg = ir_ramp_data.groupby('url').agg({'clicks': 'sum'})
+        ccdAggSum = ccdAgg['clicks'].sum()
+        ccdAggDesc = ccdAgg.describe()
+        ccdAggCount = ccdAggDesc.loc['count'][0]
+        ccdAggMean = ccdAggDesc.loc['mean'][0]
+        ccdAggStd = ccdAggDesc.loc['std'][0]
+        ccdAggMin = ccdAggDesc.loc['min'][0]
+        ccdAgg25 = ccdAggDesc.loc['25%'][0]
+        ccdAgg50 = ccdAggDesc.loc['50%'][0]
+        ccdAgg75 = ccdAggDesc.loc['75%'][0]
+        ccdAggMax = ccdAggDesc.loc['max'][0]
+        itemAgg = ir_ramp_data.groupby('html_url').agg({'clicks': 'sum'})
+        itemAggSum = itemAgg['clicks'].sum()
+        itemAggDesc = itemAgg.describe()
+        itemAggCount = itemAggDesc.loc['count'][0]
+        itemAggMean = itemAggDesc.loc['mean'][0]
+        itemAggStd = itemAggDesc.loc['std'][0]
+        itemAggMin = itemAggDesc.loc['min'][0]
+        itemAgg25 = itemAggDesc.loc['25%'][0]
+        itemAgg50 = itemAggDesc.loc['50%'][0]
+        itemAgg75 = itemAggDesc.loc['75%'][0]
+        itemAggMax = itemAggDesc.loc['max'][0]
+        serp1Df = ir_ramp_data[ir_ramp_data['position'] <= 10]
+        serp1 = len(serp1Df)
+        serp1CcdSum = serp1Df['clicks'].sum()
+        serp100Df = ir_ramp_data[ir_ramp_data['position'] <= 1000]
+        serp100 = len(serp100Df)
+        serp100CcdSum = serp100Df['clicks'].sum()
+        irCountry = r['Country']
+        irType = r['Type']
+        irPlat = r['Platform']
+        ctMethod = r['Item Count Method']
+        ctEtd = r['ETD on 2019-06-07']
+        gsSO = r['GS site operator 2019-06-07']
+        tdf = pd.DataFrame([[ir, pc_index, ai_index, inst, repoName, rURL, countItems, countCcdUrls, countItemUrls,
+                             useRatio, sumCcd, ccdAggSum, ccdAggCount, ccdAggMean, ccdAggStd, ccdAggMin, ccdAgg25,
+                             ccdAgg50, ccdAgg75, ccdAggMax, itemAggSum, itemAggCount, itemAggMean, itemAggStd,
+                             itemAggMin, itemAgg25, itemAgg50, itemAgg75, itemAggMax,
+                             serp1, serp1CcdSum, serp100, serp100CcdSum, irCountry, irType,
+                             irPlat, ctMethod, ctEtd, gsSO]], columns=cols)
+        outDf = outDf.append(tdf)
+    except Exception as e:
+        print(r['ir_index_root'])
+        print(e)
 
 outDf.to_csv(results_dir + "RAMP_summary_stats_" + str(fname_date) + ".csv", index=False)
 

@@ -1,4 +1,7 @@
 *~
 ramp_data/*.csv
+results/*.csv
 *pdf
 *docx
+.Rhistory
+.idea/*

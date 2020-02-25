@@ -66,6 +66,15 @@ A detailed description of RAMP data and data processing is provided in the publi
 
 > Data source: These data were collected manually from IR and institutional websites.
 
+**Country**
+
+> Data type: string
+
+> Description: The country where the IR is located.
+
+> Data source: These data were collected manually from IR and institutional websites.
+
+
 **Type**
 
 > Data type: string

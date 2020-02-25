@@ -7,25 +7,31 @@ the use ratio and other analyses described in Arlitsch et al., 2020 (in review).
 
 Dependencies:
 
-1. Python pandas, available from <https://pandas.pydata.org/>. Should be installed
+1. Python modules pandas and requests, available from <https://pandas.pydata.org/>
+and <https://requests.readthedocs.io/en/master/>. Should be installed
 in the Python environment in which this script will be run.
 
-2. "RAMP-IR-base-info.csv": This file contains some IR specific configuration data from
+The other imported libraries listed below are all included in the default Python
+installation.
+
+2. "RAMP_IR_base_info.csv": This file contains some IR specific configuration data from
 RAMP, as well as manually collected data including the count of items in each IR. The data
 were collected between May 27 and June 7, 2019. If this script was downloaded or cloned
 from the ramp-analysis-scripts GitHub repository at
-<https://github.com/imls-measuring-up/ramp-analyses-scripts>, then the "RAMP-IR-base-info.csv"
+<https://github.com/imls-measuring-up/ramp-analyses-scripts>, then the "RAMP_IR_base_info.csv"
 file should be in the repository's "ir_data" directory. Column definitions for this file
 are provided in the "RAMP_IR_base_info_column_definitions.md" file, which is also
-included in the GitHub repository, in the "ir_data" directory.
+included in the GitHub repository and can be found in the "ir_data" directory.
 
 3. RAMP data: A subset of RAMP data for the IR listed in the "RAMP-IR-base-info.csv" file
 has been published at Dryad: <https://doi.org/10.5061/dryad.fbg79cnr0>. The data are too
 large to be included in the GitHub repository, but the repository includes an empty
 directory, 'ramp_data.' The data should be downloaded from Dryad into the 'ramp_data'
-directory. Dataset documentation are included in the item record in Dryad.
+directory. Dataset documentation are included in the item record in Dryad. This script
+includes the necessary code to download the data into the 'ramp_data' directory - please
+be sure to comment out the corresponding lines of code after downloading the data.
 
-This script will output a CSV file, "RAMP-IR-info_YYYY-MM-DD.csv," where "YYYY-MM-DD"
+This script will output a CSV file, "RAMP_summary_stats_YYYYMMDD.csv," where "YYYYMMDD"
 will be the date on which the script is run. Brief output file column definitions are
 provided inline below, but additional documentation is provided in the
 "RAMP_summary_stats_documentation.md" file included in the GitHub repository, in the
@@ -40,16 +46,20 @@ import os
 
 import fnmatch
 
+import re
+
+import requests
+
 from urllib.parse import urlparse
 
-import re
+from datetime import date
 
 
 def make_dspace_html_url(bitstream_url):
     """For DSpace IR, generate a URL for an HTML page that contains a bitstream
        that has a positive click count in RAMP. Basically, this function attempts
        to infer or reverse-engineer the URL of a bitstream's parent HTML page
-       using the bistream's URL. For DSpace IR this requires extracting the item's
+       using the bitstream's URL. For DSpace IR this requires extracting the item's
        Handle from the bitstream URL and inserting it into an item URL.
 
     Parameters
@@ -129,7 +139,7 @@ def make_eprints_fedora_html_url(pdf_url):
 def make_fedora_ne_html_url(pdf_url):
     """This function is the same as make_eprints_fedora_html_url,
        but the regular expression is modified to include a
-       specific prefix.
+       specific prefix present in all ID numbers.
 
     Parameters
     ----------
@@ -231,7 +241,48 @@ data_dir = '../ir_data/'
 ramp_data_dir = '../ramp_data/'
 results_dir = '../results/'
 
+# Get today's date for the output filename.
+today = date.today()
+fname_date = today.strftime("%Y%m%d")
+
+# Download the January - May 2019 RAMP data subset from Dryad.
+# This only needs to be done the first time the analysis is run.
+# Please comment out lines 278-282 as needed following download.
+
+# These are the file URLs.
+ramp_201901_ai = 'https://datadryad.org/stash/downloads/file_stream/331135'
+ramp_201901_pc = 'https://datadryad.org/stash/downloads/file_stream/331145'
+ramp_201902_ai = 'https://datadryad.org/stash/downloads/file_stream/331134'
+ramp_201902_pc = 'https://datadryad.org/stash/downloads/file_stream/331144'
+ramp_201903_ai = 'https://datadryad.org/stash/downloads/file_stream/331136'
+ramp_201903_pc = 'https://datadryad.org/stash/downloads/file_stream/331146'
+ramp_201904_ai = 'https://datadryad.org/stash/downloads/file_stream/331139'
+ramp_201904_pc = 'https://datadryad.org/stash/downloads/file_stream/331147'
+ramp_201905_ai = 'https://datadryad.org/stash/downloads/file_stream/331140'
+ramp_201905_pc = 'https://datadryad.org/stash/downloads/file_stream/331148'
+
+# Build a dictionary to match filenames with corresponding file URLs.
+ramp_subset = {}
+ramp_subset['2019-01_RAMP_subset_country-device-info.csv'] = ramp_201901_ai
+ramp_subset['2019-01_RAMP_subset_page-clicks_v2.csv'] = ramp_201901_pc
+ramp_subset['2019-02_RAMP_subset_country-device-info.csv'] = ramp_201902_ai
+ramp_subset['2019-02_RAMP_subset_page-clicks_v2.csv'] = ramp_201902_pc
+ramp_subset['2019-03_RAMP_subset_country-device-info.csv'] = ramp_201903_ai
+ramp_subset['2019-03_RAMP_subset_page-clicks_v2.csv'] = ramp_201903_pc
+ramp_subset['2019-04_RAMP_subset_country-device-info.csv'] = ramp_201904_ai
+ramp_subset['2019-04_RAMP_subset_page-clicks_v2.csv'] = ramp_201904_pc
+ramp_subset['2019-05_RAMP_subset_country-device-info.csv'] = ramp_201905_ai
+ramp_subset['2019-05_RAMP_subset_page-clicks_v2.csv'] = ramp_201905_pc
+
+# Download the data and save to the 'ramp_data' directory.
+for file_name, file_pointer in ramp_subset.items():
+    r = requests.get(file_pointer, stream=True)
+    with open(ramp_data_dir + file_name, 'wb') as dl:
+        for chunk in r.iter_content(chunk_size=512):
+            dl.write(chunk)
+
 # Create a list to hold the names of individual RAMP data files.
+# Note that only page-click data are being used here.
 click_data_files = []
 for r, d, n in os.walk(ramp_data_dir):
     for f in n:
@@ -250,9 +301,11 @@ for f in click_data_files[1:]:
 
 # Read the file with the manually collected data about IR size, platform,
 # country, etc.
-ir_info = pd.read_csv(data_dir + 'RAMP-IR-base-info.csv')
+ir_info = pd.read_csv(data_dir + 'RAMP_IR_base_info.csv')
 
 # Define the columns that for the output data frame and file.
+# More detailed column definitions are included in the file
+# "RAMP_summary_stats_documentation.md."
 cols = ['ir',                                            # ir_index_root
         'pc_index',                                      # ir_page_click_index
         'ai_index',                                      # ir_access_info_index
@@ -296,10 +349,14 @@ cols = ['ir',                                            # ir_index_root
 # Create the data frame to store the summary statistics.
 outDf = pd.DataFrame(columns=cols)
 
-
+"""
+This long "for" loop generates RAMP summary statistics for each IR included in the IR_base_info.csv file.
+Variables are defined in the data table definitions for the output file described in 
+"RAMP_summary_stats_documentation.md." See Python pandas documentation for more information about
+statistical functions.
+"""
 for i, r in ir_info.iterrows():
     ir = r['ir_index_root']
-    print(ir)
     pc_index = r['ir_page_click_index']
     ai_index = r['ir_access_info_index']
     inst = r['Institution']
@@ -309,13 +366,16 @@ for i, r in ir_info.iterrows():
     ir_ramp_data = ramp_data[(ramp_data['index'] == pc_index) &
                              (ramp_data['citableContent'] == 'Yes') &
                              (ramp_data['clicks'] > 0)].copy()
-    # deduplicate item URLs
+    """
+    Deduplicate item URLs. A more detailed definition of what an "item"
+    is in this context is included in the data table definitions
+    for the output file. See "RAMP_summary_stats_documentation.md."
+    """
     ir_ramp_data = construct_html_urls(ir_ramp_data, r['Platform'])
     countCcdUrls = len(pd.unique(ir_ramp_data['url']))
     countItemUrls = len(pd.unique(ir_ramp_data['html_url']))
     useRatio = round(countItemUrls / countItems, 2)
     sumCcd = ir_ramp_data['clicks'].sum()
-    # ir_ramp_data.groupby('url').agg({'clicks': 'sum'})
     ccdAgg = ir_ramp_data.groupby('url').agg({'clicks': 'sum'})
     ccdAggSum = ccdAgg['clicks'].sum()
     ccdAggDesc = ccdAgg.describe()
@@ -358,5 +418,7 @@ for i, r in ir_info.iterrows():
                          irPlat, ctMethod, ctEtd, gsSO]], columns=cols)
     outDf = outDf.append(tdf)
 
-outDf.to_csv(results_dir + "RAMP_summary_stats_" + 'insert date'  + ".csv", index=False)
+outDf.to_csv(results_dir + "RAMP_summary_stats_" + str(fname_date) + ".csv", index=False)
+
+print("Done. The output file, 'RAMP_summary_stats_" + str(fname_date) + ".csv' is in the 'results' directory.")
 

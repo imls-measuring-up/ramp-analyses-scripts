@@ -91,7 +91,66 @@ count items are identified in the _ctMethod_ field described below.
 
 > Data type: integer
 
-> Description: 
+> Description: Count of unique URLs in RAMP data that point to content files (PDF, CSV, etc.) AND which
+have click values greater than zero. Within RAMP these are referred to as "citable content URLs." 
+For more detailed information about citable content URLs and citable content downloads (CCD),
+please see RAMP data documentation at <https://doi.org/10.5061/dryad.fbg79cnr0>.
+
+> Data source: "Page" (per URL) data from the Google Search Console API are filtered to identify URLs that
+point to content files. Filters vary by IR platform. URLs pointing to content files are further filtered
+on whether those URLs received any clicks. The final list of content file URLs with positive click values
+is deduplicated to arrive at a count of clicked-on content file URLs. 
+
+**countItemUrls**
+
+> Data type: integer
+
+> Description: Content file URLs as defined above are typically nested within item HTML pages in IR. This
+variable represents the count of unique item HTML pages that contain content file URLs
+with positive click values in RAMP. For an example, see the following dataset:
+
+>>>OBrien P, Arlitsch K, Sterman L, Mixter J, Wheeler J, Borda S (2016) Dataset supporting study on Undercounting
+File Downloads from Institutional Repositories [dataset]. Montana State University ScholarWorks. 
+http://doi.org/10.15788/M2Z59N
+
+> In this example, even though the item includes seven content files, the "item URL"  for the purposes of this variable
+is the item's page in the IR at <https://scholarworks.montana.edu/xmlui/handle/1/9939>.
+
+> Data source: Citable content URLs as described above are processed to infer the URL of the parent item's 
+HTML page. This process is platform dependent, with platform specific functions defined in the Python script
+"ramp_summary_stats_normalize_urls.py." 
+
+**useRatio**
+
+> Data type: floating point
+
+> Description: The ratio of the number of items containing content files with positive click values in RAMP to the
+total number of items hosted by a repository. Use ratio as defined here does not differentiate between items that
+receive a single click on a content file versus items that receive many clicks on content files.
+
+> Data source: This ratio is calculated by "ramp_summary_stats_normalize_urls.py." The calculation is
+
+>>>countItemUrls \ countItems
+
+**sumCcd**
+
+> Data type: integer
+
+> Description: Sum of clicks on citable content URLs.
+
+> Data source: Google Search Console API.
+
+**ccdAggSum**
+
+> Data type: integer
+
+> Description: Sum of clicks on citable content URLs. This should be the same as the _sumCcd_ variable and is
+included as a data integrity check against the filtering processes used to derive the _countCcdUrls_ and 
+_countItemUrls_ variables. _sumCcd_ is calculated before filtering, this variable is calculated after.
+
+> Data source: Google Search Console API.
+
+
 
 **Country**
 

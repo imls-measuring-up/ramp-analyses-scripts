@@ -164,7 +164,7 @@ def make_fedora_ne_html_url(pdf_url):
         return p.scheme + '://' + p.netloc + pdf_id.group()
 
 
-def make_bepress_ccd_urls(pdf_url):
+def make_bepress_oai_urls(pdf_url):
     """For BePress Digital Commons IR, generate an OAI-PMH identifier (UID) for an item
        that contains a content file
        that has a positive click count in RAMP. Basically, this function attempts
@@ -235,7 +235,7 @@ def construct_html_urls(ir_data, platform):
     if platform == 'Fedora':
         ir_data['html_url'] = ir_ramp_data['url'].apply(make_eprints_fedora_html_url)
     if platform == 'Digital Commons':
-        ir_data['html_url'] = ir_ramp_data['url'].apply(make_bepress_ccd_urls)
+        ir_data['html_url'] = ir_ramp_data['url'].apply(make_bepress_oai_urls)
     return ir_data
 
 # Set paths to data and output directories. Update as needed.

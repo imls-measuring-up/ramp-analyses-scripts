@@ -1,21 +1,35 @@
-## Load the RIO package.
-## Read the csv file with base IR info.
+######################################################################################
+## Generate RAMP Country and Device Access Metrics
+##
+## GitHub repository URL: <https://github.com/imls-measuring-up/ramp-analyses-scripts>
+##
+## This script generates summary statistics of IR search engine performance data
+## as reported by Google and harvested by the RAMP application. It also cross-
+## references RAMP data with manually collected data about IR to calculate
+## the country device access metrics described in Arlitsch et al., 2020 (in review).
+######################################################################################
+
 library(rio)
+library(dplyr)
+library(psych)
+
+## Read the csv file with base IR info.
 IR <- import("../ir_data/RAMP_IR_base_info.csv")
 str(IR)
-# Items in repository
+
+## Items in repository
 length(IR$ir)
 summary(IR$`Items in repository on 2019-05-27`)
-# Items by platform
-library(dplyr)
+
+## Items by platform
 IR%>% 
   group_by(Platform)%>% 
   summarise(sum = sum(`Items in repository on 2019-05-27`))%>%
   arrange(desc(sum))
 IR$Platform <- factor(IR$Platform, levels = c("DSpace", "Digital Commons", "Eprints", "Fedora"))
-library(psych)
 describeBy(IR$`Items in repository on 2019-05-27`, IR$Platform)
-# Items per country
+
+## Items per country
 IR%>% 
   group_by(Country)%>% 
   summarise(sum = sum(`Items in repository on 2019-05-27`))%>%

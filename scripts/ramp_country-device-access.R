@@ -21,34 +21,34 @@ IR <- import("../results/RAMP_summary_stats_20200227.csv")
 str(IR)
 
 ## Items in repository
-length(IR$ir_index_root)
-summary(IR$`Items in repository on 2019-05-27`)
+length(IR$ir)
+summary(IR$countItems)
 
 ## Items by platform
 IR%>% 
   group_by(Platform)%>% 
-  summarise(sum = sum(`Items in repository on 2019-05-27`))%>%
+  summarise(sum = sum(countItems))%>%
   arrange(desc(sum))
-IR$Platform <- factor(IR$Platform, levels = c("DSpace", "Digital Commons", "EPrints", "Fedora"))
-describeBy(IR$`Items in repository on 2019-05-27`, IR$Platform)
+IR$Platform <- factor(IR$normIrPlat, levels = c("DSpace", "Digital Commons", "EPrints", "Fedora"))
+describeBy(IR$countItems, IR$Platform)
 
 ## Items per country
 IR%>% 
-  group_by(Country)%>% 
-  summarise(sum = sum(`Items in repository on 2019-05-27`))%>%
+  group_by(irCountry)%>% 
+  summarise(sum = sum(countItems))%>%
   arrange(desc(sum))
-IR$Country <- factor(IR$Country, levels = c("USA", "Australia", "UK", "Canada", "Sweden", "New Zealand", "South Africa"))
-describeBy(IR$`Items in repository on 2019-05-27`, IR$Country)
+IR$Country <- factor(IR$irCountry, levels = c("USA", "Australia", "UK", "Canada", "Sweden", "New Zealand", "South Africa"))
+describeBy(IR$countItems, IR$irCountry)
 # Items by Type
 IR%>% 
-  group_by(Type)%>% 
-  summarise(sum = sum(`Items in repository on 2019-05-27`))%>%
+  group_by(irType)%>% 
+  summarise(sum = sum(countItems))%>%
   arrange(desc(sum))
 IR$Type <- factor(IR$Type, levels = c("University", "Consortium"))
-describeBy(IR$`Items in repository on 2019-05-27`, IR$Type)
+describeBy(IR$countItems, IR$irType)
 # Categories
-IR$category <- ifelse(IR$`Use Ratio (COUNT unique CCD URLS / Count items in IR)`<=.5 & IR$`Items in repository on 2019-05-27` > 51000, "High Item Low Downloads",
-                      ifelse(IR$`Use Ratio (COUNT unique CCD URLS / Count items in IR)`>=.51 & IR$`Items in repository on 2019-05-27` <= 17979,"Low items High Downloads", "Low items Low Downloads"))
+IR$category <- ifelse(IR$useRatio<=.5 & IR$countItems > 51000, "High Item Low Downloads",
+                      ifelse(IR$useRatio>=.51 & IR$countItems<= 17979,"Low items High Downloads", "Low items Low Downloads"))
 table(IR$category)
 # Items in use ratio category
 library(psych)

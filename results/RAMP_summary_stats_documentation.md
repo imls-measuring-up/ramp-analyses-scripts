@@ -17,6 +17,11 @@ documentation is provided in the Dryad item record at <https://doi.org/10.5061/d
 by this analysis. If you have cloned the repository, you will need to run the script in order to
 download raw RAMP data and generate RAMP summary statistics as described here. 
 
+## Data used or cited by this analysis: 
+
+Google, Inc. (2019). Search Console APIs. Retrieved from 
+https://developers.google.com/webmaster-tools/search-console-api-original. 
+
 ## Column definitions and data sources
 
 **ir**
@@ -146,13 +151,205 @@ receive a single click on a content file versus items that receive many clicks o
 
 > Description: Sum of clicks on citable content URLs. This should be the same as the _sumCcd_ variable and is
 included as a data integrity check against the filtering processes used to derive the _countCcdUrls_ and 
-_countItemUrls_ variables. _sumCcd_ is calculated before filtering, this variable is calculated after.
+_countItemUrls_ variables. _sumCcd_ is calculated before filtering, this variable is calculated after. For large
+RAMP datasets some variation between this variable and _sumCcd_ is acceptable.
 
 > Data source: Google Search Console API.
 
+**ccdAggCount**
 
+> Data type: integer
 
-**Country**
+> Description: Count of unique citable content URLs. This should be the same as the _countCcdUrls_ variable and is
+included as a data integrity check against the filtering processes used to derive the _countCcdUrls_ and 
+_countItemUrls_ variables. _countCcdUrls_ is calculated before filtering, this variable is calculated after. For large
+RAMP datasets some variation between this variable and _countCcdUrls_ is acceptable.
+
+> Data source: Google Search Console API.
+
+**ccdAggMean**
+
+> Data type: floating point
+
+> Description: Average number of clicks on citable content URLs. Note that citable content URLs with zero clicks
+are filtered out of the dataset prior to calculating this stastic, so it is only representative of the subset
+of citable content URLs that have positive click values.
+
+> Data source:  Google Search Console API.
+
+**ccdAggStd**
+
+> Data type: floating point
+
+> Description: Standard deviation of clicks on citable content URLs. Note that citable content URLs with zero clicks
+are filtered out of the dataset prior to calculating this stastic, so it is only representative of the subset
+of citable content URLs that have positive click values.
+
+> Data source:  Google Search Console API.
+
+**ccdAggMin**
+
+> Data type: integer
+
+> Description: Minimum number of clicks on citable content URLs. Note that citable content URLs with zero clicks
+are filtered out of the dataset prior to calculating this stastic, so it is only representative of the subset
+of citable content URLs that have positive click values. 
+
+> Data source:  Google Search Console API.
+
+**ccdAgg25**
+
+> Data type: integer
+
+> Description: First quartile of clicks on citable content URLs. Twenty five percent of citable content URLs received
+this many clicks or fewer. Note that citable content URLs with zero clicks
+are filtered out of the dataset prior to calculating this stastic, so it is only representative of the subset
+of citable content URLs that have positive click values. 
+
+> Data source:  Google Search Console API.
+
+**ccdAgg50**
+
+> Data type: integer
+
+> Description: Second quartile of clicks on citable content URLs. Fifty percent of citable content URLs received
+this many clicks or fewer. Note that citable content URLs with zero clicks
+are filtered out of the dataset prior to calculating this stastic, so it is only representative of the subset
+of citable content URLs that have positive click values. 
+
+> Data source:  Google Search Console API.
+
+**ccdAgg75**
+
+> Data type: integer
+
+> Description: Third quartile of clicks on citable content URLs. Seventy five percent of citable content URLs received
+this many clicks or fewer. Note that citable content URLs with zero clicks
+are filtered out of the dataset prior to calculating this stastic, so it is only representative of the subset
+of citable content URLs that have positive click values. 
+
+> Data source:  Google Search Console API.
+
+**ccdAggMax**
+
+> Data type: integer
+
+> Description: Maximum number of clicks on citable content URLs. Note that citable content URLs with zero clicks
+are filtered out of the dataset prior to calculating this stastic, so it is only representative of the subset
+of citable content URLs that have positive click values. 
+
+> Data source:  Google Search Console API.
+
+**itemAggSum**
+
+> Data type: integer
+
+> Description: Sum of clicks on citable content URLs, aggregated at the level of the parent items' HTML pages.
+This should be the same as the _sumCcd_ variable and is
+included as a data integrity check against the filtering processes used to derive the _countCcdUrls_ and 
+_countItemUrls_ variables. _sumCcd_ is calculated before filtering, this variable is calculated after. For large
+RAMP datasets some variation between this variable and _sumCcd_ is acceptable.
+
+> Data source: Google Search Console API.
+
+**itemAggCount**
+
+> Data type: integer
+
+> Description: Count of unique item HTML pages of items containing citable content URLs with positive click values in
+RAMP.  This should be the same as the _countItemUrls_ variable and is
+included as a data integrity check against the filtering processes used to derive the _countCcdUrls_ and 
+_countItemUrls_ variables. For large RAMP datasets some variation between this variable and _countItemUrls_ 
+is acceptable.
+
+> Data source: Google Search Console API.
+
+**itemAggMean**
+
+> Data type: floating point
+
+> Description: Average number of clicks on citable content URLs, aggregated at the level of the parent items' HTML
+pages. Note that citable content  URLs with zero clicks are filtered out of the dataset prior to calculating this 
+statistic, so it is only representative of the subset of item HTML pages that contain citable content URLs with
+positive click values.
+
+> Data source:  Google Search Console API.
+
+**itemAggStd**
+
+> Data type: floating point
+
+> Description: Standard deviation of clicks on citable content URLs, aggregated at the level of the parent items' HTML
+pages. Note that citable content  URLs with zero clicks are filtered out of the dataset prior to calculating this 
+statistic, so it is only representative of the subset of item HTML pages that contain citable content URLs with
+positive click values.
+
+> Data source:  Google Search Console API.
+
+**itemAggMin**
+
+> Data type: integer
+
+> Description: Minimum number of clicks on citable content URLs, aggregated at the level of the parent items' HTML
+pages. Note that citable content  URLs with zero clicks are filtered out of the dataset prior to calculating this 
+statistic, so it is only representative of the subset of item HTML pages that contain citable content URLs with
+positive click values.
+
+> Data source:  Google Search Console API.
+
+**itemAgg25**
+
+> Data type: integer
+
+> Description: First quartile of clicks on citable content URLs,aggregated at the level of the parent items' HTML
+pages. Twenty five percent of items containing clicked content file URLs received
+this many clicks or fewer. Note that citable content URLs with zero clicks
+are filtered out of the dataset prior to calculating this stastic, so it is only representative of the subset 
+of item HTML pages that contain citable content URLs with positive click values.
+
+> Data source:  Google Search Console API.
+
+**itemAgg50**
+
+> Data type: integer
+
+> Description: Second quartile of clicks on citable content URLs,aggregated at the level of the parent items' HTML
+pages. Fifty percent of items containing clicked content file URLs received
+this many clicks or fewer. Note that citable content URLs with zero clicks
+are filtered out of the dataset prior to calculating this stastic, so it is only representative of the subset 
+of item HTML pages that contain citable content URLs with positive click values.
+
+> Data source:  Google Search Console API.
+
+**itemAgg75**
+
+> Data type: integer
+
+> Description: Third quartile of clicks on citable content URLs,aggregated at the level of the parent items' HTML
+pages. Seventy five percent of items containing clicked content file URLs received
+this many clicks or fewer. Note that citable content URLs with zero clicks
+are filtered out of the dataset prior to calculating this stastic, so it is only representative of the subset 
+of item HTML pages that contain citable content URLs with positive click values.
+
+> Data source:  Google Search Console API.
+
+**itemAggMax**
+
+> Data type: integer
+
+> Description: Maximum number of clicks on citable content URLs, aggregated at the level of the parent items' HTML
+pages. Note that citable content  URLs with zero clicks are filtered out of the dataset prior to calculating this 
+statistic, so it is only representative of the subset of item HTML pages that contain citable content URLs with
+positive click values.
+
+> Data source:  Google Search Console API.
+
+'serp1',                                         # COUNT CCD URLs with Position <=10'
+'serp1CcdSum',                                   # SUM CCD clicks on URLs with Position <=10
+'serp100',                                       # COUNT CCD URLs with Position <=1000
+'serp100CcdSum',                                 # SUM CCD clicks on URLs with Position <= 1000
+
+**irCountry**
 
 > Data type: string
 
@@ -161,15 +358,16 @@ _countItemUrls_ variables. _sumCcd_ is calculated before filtering, this variabl
 > Data source: These data were collected manually from IR and institutional websites.
 
 
-**Type**
+**irType**
 
 > Data type: string
 
-> Description: The type of organization or institution operating the IR. Current values include _University_ or _Consortium_.
+> Description: The type of organization or institution operating the IR. Current values include 
+_University_ or _Consortium_.
 
 > Data source: These data were collected manually from IR and institutional websites.
 
-**Platform**
+**irPlat**
 
 > Data type: string
 
@@ -177,25 +375,29 @@ _countItemUrls_ variables. _sumCcd_ is calculated before filtering, this variabl
 
 > Data source: Internal RAMP IR configuration data.
 
-**Item Count Method**
+**ctMethod**
 
 > Data type: string
 
 > Description: The method used to count total items and total ETD in the IR.
 
-**ETD on 2019-06-07**
+**ctEtd**
 
 > Data type: integer
 
-> Description: The count of electronic theses and dissertations in the IR. Null values are represented by a decimal point.
+> Description: The count of electronic theses and dissertations in the IR ETD on 2019-06-07. 
+Null values are represented by a decimal point.
 
 > Data source: These data were collected manually from IR and institutional websites.
 
-**GS site operator 2019-06-07**
+**gsSO**
 
 > Data type: integer
 
-> Description: The SITE operator can be used with Google search engines to elicit a very rough count of the number items that Google has indexed from a given website or repository. It should not be used to assume anything more than an approximate count. The search command is "site:repository.institution.domain." Null values are represented by a decimal point.
+> Description: The SITE operator can be used with Google search engines to elicit a very rough count of the number
+items that Google has indexed from a given website or repository. It should not be used to assume anything more 
+than an approximate count. The search command is "site:repository.institution.domain." 
+Null values are represented by a decimal point. GS site operator 2019-06-07
 
 > Example: site.scholarworks.montana.edu
 

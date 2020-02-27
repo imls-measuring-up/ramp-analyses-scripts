@@ -17,7 +17,7 @@ documentation is provided in the Dryad item record at <https://doi.org/10.5061/d
 by this analysis. If you have cloned the repository, you will need to run the script in order to
 download raw RAMP data and generate RAMP summary statistics as described here. 
 
-## Data used or cited by this analysis: 
+## Other data used or cited by this analysis: 
 
 Google, Inc. (2019). Search Console APIs. Retrieved from 
 https://developers.google.com/webmaster-tools/search-console-api-original. 
@@ -189,7 +189,7 @@ of citable content URLs that have positive click values.
 
 **ccdAggMin**
 
-> Data type: integer
+> Data type: floating point
 
 > Description: Minimum number of clicks on citable content URLs. Note that citable content URLs with zero clicks
 are filtered out of the dataset prior to calculating this stastic, so it is only representative of the subset
@@ -199,7 +199,7 @@ of citable content URLs that have positive click values.
 
 **ccdAgg25**
 
-> Data type: integer
+> Data type: floating point
 
 > Description: First quartile of clicks on citable content URLs. Twenty five percent of citable content URLs received
 this many clicks or fewer. Note that citable content URLs with zero clicks
@@ -210,7 +210,7 @@ of citable content URLs that have positive click values.
 
 **ccdAgg50**
 
-> Data type: integer
+> Data type: floating point
 
 > Description: Second quartile of clicks on citable content URLs. Fifty percent of citable content URLs received
 this many clicks or fewer. Note that citable content URLs with zero clicks
@@ -221,7 +221,7 @@ of citable content URLs that have positive click values.
 
 **ccdAgg75**
 
-> Data type: integer
+> Data type: floating point
 
 > Description: Third quartile of clicks on citable content URLs. Seventy five percent of citable content URLs received
 this many clicks or fewer. Note that citable content URLs with zero clicks
@@ -232,7 +232,7 @@ of citable content URLs that have positive click values.
 
 **ccdAggMax**
 
-> Data type: integer
+> Data type: floating point
 
 > Description: Maximum number of clicks on citable content URLs. Note that citable content URLs with zero clicks
 are filtered out of the dataset prior to calculating this stastic, so it is only representative of the subset
@@ -288,7 +288,7 @@ positive click values.
 
 **itemAggMin**
 
-> Data type: integer
+> Data type: floating point
 
 > Description: Minimum number of clicks on citable content URLs, aggregated at the level of the parent items' HTML
 pages. Note that citable content  URLs with zero clicks are filtered out of the dataset prior to calculating this 
@@ -299,7 +299,7 @@ positive click values.
 
 **itemAgg25**
 
-> Data type: integer
+> Data type: floating point
 
 > Description: First quartile of clicks on citable content URLs,aggregated at the level of the parent items' HTML
 pages. Twenty five percent of items containing clicked content file URLs received
@@ -311,7 +311,7 @@ of item HTML pages that contain citable content URLs with positive click values.
 
 **itemAgg50**
 
-> Data type: integer
+> Data type: floating point
 
 > Description: Second quartile of clicks on citable content URLs,aggregated at the level of the parent items' HTML
 pages. Fifty percent of items containing clicked content file URLs received
@@ -323,7 +323,7 @@ of item HTML pages that contain citable content URLs with positive click values.
 
 **itemAgg75**
 
-> Data type: integer
+> Data type: floating point
 
 > Description: Third quartile of clicks on citable content URLs,aggregated at the level of the parent items' HTML
 pages. Seventy five percent of items containing clicked content file URLs received
@@ -335,7 +335,7 @@ of item HTML pages that contain citable content URLs with positive click values.
 
 **itemAggMax**
 
-> Data type: integer
+> Data type: floating point
 
 > Description: Maximum number of clicks on citable content URLs, aggregated at the level of the parent items' HTML
 pages. Note that citable content  URLs with zero clicks are filtered out of the dataset prior to calculating this 
@@ -344,10 +344,41 @@ positive click values.
 
 > Data source:  Google Search Console API.
 
-'serp1',                                         # COUNT CCD URLs with Position <=10'
-'serp1CcdSum',                                   # SUM CCD clicks on URLs with Position <=10
-'serp100',                                       # COUNT CCD URLs with Position <=1000
-'serp100CcdSum',                                 # SUM CCD clicks on URLs with Position <= 1000
+**serp1**
+
+> Data type: integer
+
+> Description: Count of citable content URLs with positive click values and position values less than or equal to 10. 
+These URLs appeared on the first page of a search result.
+
+> Data source:  Google Search Console API.
+
+**serp1CcdSum**
+
+> Data type: integer
+
+> Description: Sum of clickc on citable content URLs with positive click values and position values less than 
+or equal to 10. These URLs appeared on the first page of a search result.
+
+> Data source:  Google Search Console API.
+
+**serp100**
+
+> Data type: integer
+
+> Description: Count of citable content URLs with positive click values and position values less than or equal to 1000. 
+These URLs appeared within the first one hundred pages of a search result.
+
+> Data source:  Google Search Console API.
+
+**serp100CcdSum**
+
+> Data type: integer
+
+> Description: Sum of clickc on citable content URLs with positive click values and position values less than 
+or equal to 1000. These URLs appeared within the first one hundred pages of a search result.
+
+> Data source:  Google Search Console API.
 
 **irCountry**
 
@@ -385,7 +416,7 @@ _University_ or _Consortium_.
 
 > Data type: integer
 
-> Description: The count of electronic theses and dissertations in the IR ETD on 2019-06-07. 
+> Description: The count of electronic theses and dissertations in the IR on 2019-06-07. 
 Null values are represented by a decimal point.
 
 > Data source: These data were collected manually from IR and institutional websites.
@@ -396,8 +427,8 @@ Null values are represented by a decimal point.
 
 > Description: The SITE operator can be used with Google search engines to elicit a very rough count of the number
 items that Google has indexed from a given website or repository. It should not be used to assume anything more 
-than an approximate count. The search command is "site:repository.institution.domain." 
-Null values are represented by a decimal point. GS site operator 2019-06-07
+than an approximate count. The search command is "site:repository.institution.domain." Searches were conducted on
+2019-06-07. Null values are represented by a decimal point.
 
 > Example: site.scholarworks.montana.edu
 

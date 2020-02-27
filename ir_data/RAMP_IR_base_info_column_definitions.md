@@ -93,6 +93,15 @@ A detailed description of RAMP data and data processing is provided in the publi
 
 > Data source: Internal RAMP IR configuration data.
 
+**Normalized_Platform**
+
+> Data type: string
+
+> Description: The IR software platform. Names have been normalized to remove
+version numbers and other variations.
+
+> Data source: Internal RAMP IR configuration data.
+
 **Item Count Method**
 
 > Data type: string

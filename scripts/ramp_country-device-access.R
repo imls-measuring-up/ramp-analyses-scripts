@@ -13,12 +13,15 @@ library(rio)
 library(dplyr)
 library(psych)
 
-## Read the csv file with base IR info.
-IR <- import("../ir_data/RAMP_IR_base_info.csv")
+## Read the csv file with descriptive statistics for RAMP IR.
+## Note the filename incluces a date, which may need to be updated
+## depending on when the generating script was run.
+## The file below is included in the repository for example purposes.
+IR <- import("../results/RAMP_summary_stats_20200227.csv")
 str(IR)
 
 ## Items in repository
-length(IR$ir)
+length(IR$ir_index_root)
 summary(IR$`Items in repository on 2019-05-27`)
 
 ## Items by platform
@@ -26,7 +29,7 @@ IR%>%
   group_by(Platform)%>% 
   summarise(sum = sum(`Items in repository on 2019-05-27`))%>%
   arrange(desc(sum))
-IR$Platform <- factor(IR$Platform, levels = c("DSpace", "Digital Commons", "Eprints", "Fedora"))
+IR$Platform <- factor(IR$Platform, levels = c("DSpace", "Digital Commons", "EPrints", "Fedora"))
 describeBy(IR$`Items in repository on 2019-05-27`, IR$Platform)
 
 ## Items per country

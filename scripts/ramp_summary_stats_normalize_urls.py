@@ -344,6 +344,7 @@ cols = ['ir',                                            # ir_index_root
         'irCountry',                                     # Country where the IR is located
         'irType',                                        # Type of repository (university, consortia, etc.)
         'irPlat',                                        # IR Platform
+        'normIrPlat',                                    # Normalized IR platform names - no versions, etc.
         'ctMethod',                                      # Item Count Method
         'ctEtd',                                         # ETD on 2019-06-07
         'gsSO']                                          # GS site operator 2019-06-07
@@ -410,6 +411,7 @@ for i, r in ir_info.iterrows():
         irCountry = r['Country']
         irType = r['Type']
         irPlat = r['Platform']
+        normIrPlat = r['Normalized_Platform']
         ctMethod = r['Item Count Method']
         ctEtd = r['ETD on 2019-06-07']
         gsSO = r['GS site operator 2019-06-07']
@@ -418,7 +420,7 @@ for i, r in ir_info.iterrows():
                              ccdAgg50, ccdAgg75, ccdAggMax, itemAggSum, itemAggCount, itemAggMean, itemAggStd,
                              itemAggMin, itemAgg25, itemAgg50, itemAgg75, itemAggMax,
                              serp1, serp1CcdSum, serp100, serp100CcdSum, irCountry, irType,
-                             irPlat, ctMethod, ctEtd, gsSO]], columns=cols)
+                             irPlat, normIrPlat, ctMethod, ctEtd, gsSO]], columns=cols)
         outDf = outDf.append(tdf)
     except Exception as e:
         print(r['ir_index_root'])

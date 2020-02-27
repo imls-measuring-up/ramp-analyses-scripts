@@ -406,6 +406,16 @@ _University_ or _Consortium_.
 
 > Data source: Internal RAMP IR configuration data.
 
+**normIrPlat**
+
+> Data type: string
+
+> Description: The IR software platform. Names have been normalized to remove
+version numbers and other variations.
+
+> Data source: Internal RAMP IR configuration data.
+
+
 **ctMethod**
 
 > Data type: string

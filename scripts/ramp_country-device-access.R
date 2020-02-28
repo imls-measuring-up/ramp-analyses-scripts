@@ -51,32 +51,31 @@ IR$category <- ifelse(IR$useRatio<=.5 & IR$countItems > 51000, "High Item Low Do
                       ifelse(IR$useRatio>=.51 & IR$countItems<= 17979,"Low items High Downloads", "Low items Low Downloads"))
 table(IR$category)
 # Items in use ratio category
-library(psych)
 IR$category <- factor(IR$category, levels = c("High Item Low Downloads", "Low items Low Downloads", "Low items High Downloads"))
-describeBy(IR$`Items in repository on 2019-05-27`, IR$category)
+describeBy(IR$countItems, IR$category)
 IR%>% 
   group_by(category)%>% 
-  summarise(sum = sum(`Items in repository on 2019-05-27`))%>%
+  summarise(sum = sum(countItems))%>%
   arrange(desc(sum))
 # Use ratio category
-describeBy(IR$`Use Ratio (COUNT unique CCD URLS / Count items in IR)`, IR$category)
+describeBy(IR$useRatio, IR$category)
 # Items vs. Use ratio
-mean(IR$`Items in repository on 2019-05-27`)
+mean(IR$countItems)
 IR$Items <- ifelse(
-  IR$`Items in repository on 2019-05-27` < 34927.51, "Below Average", "Above Average"
+  IR$countItems < 34927.51, "Below Average", "Above Average"
 )
 IR$Items <- as.factor(IR$Items)
-describeBy(IR$`Use Ratio (COUNT unique CCD URLS / Count items in IR)`, IR$Items)
+describeBy(IR$useRatio, IR$Items)
 # Use ratio per platform
-IR$Platform <- factor(IR$Platform, levels = c("Eprints", "Fedora", "DSpace", "Digital Commons"))
-describeBy(IR$`Use Ratio (COUNT unique CCD URLS / Count items in IR)`, IR$Platform)
+IR$normIrPlat <- factor(IR$normIrPlat, levels = c("EPrints", "Fedora", "DSpace", "Digital Commons"))
+describeBy(IR$useRatio, IR$normIrPlat)
 # Device/ country/ click/position data
 #-------load data
-dat1 <- import("2019-01_RAMP_all_country-device-info.csv")
-dat2 <- import("2019-02_RAMP_all_country-device-info.csv")
-dat3 <- import("2019-03_RAMP_all_country-device-info.csv")
-dat4 <- import("2019-04_RAMP_all_country-device-info.csv")
-dat5 <- import("2019-05_RAMP_all_country-device-info.csv")
+dat1 <- import("../ramp_data/2019-01_RAMP_subset_country-device-info.csv")
+dat2 <- import("../ramp_data/2019-02_RAMP_subset_country-device-info.csv")
+dat3 <- import("../ramp_data/2019-03_RAMP_subset_country-device-info.csv")
+dat4 <- import("../ramp_data/2019-04_RAMP_subset_country-device-info.csv")
+dat5 <- import("../ramp_data/2019-05_RAMP_subset_country-device-info.csv")
 str(dat1)
 str(dat2)
 str(dat3)

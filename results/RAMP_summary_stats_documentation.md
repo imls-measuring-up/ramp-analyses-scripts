@@ -135,7 +135,7 @@ receive a single click on a content file versus items that receive many clicks o
 
 > Data source: This ratio is calculated by "ramp_summary_stats_normalize_urls.py." The calculation is
 
->>>countItemUrls \ countItems
+>>>_countItemUrls_ / _countItems_
 
 **sumCcd**
 
@@ -430,6 +430,16 @@ version numbers and other variations.
 Null values are represented by a decimal point.
 
 > Data source: These data were collected manually from IR and institutional websites.
+
+**pctEtd**
+
+> Data type: floating point
+
+> Description: The percentage of the items in the IR which are ETD. Determined as
+
+>>>_ctEtd_ / _countItems_ 
+
+> Data source: These data were collected manually from IR and institutional websites.s
 
 **gsSO**
 

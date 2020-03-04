@@ -202,7 +202,7 @@ def make_bepress_oai_urls(pdf_url):
 
 
 def construct_html_urls(ir_data, platform):
-    """This is a helper function that take RAMP data for a single IR
+    """This is a helper function that takes RAMP data for a single IR
        and passes it to the appropriate function for building the
        HTML URLs of item pages containing content files with positive click
        values in RAMP. 
@@ -367,7 +367,7 @@ for i, r in ir_info.iterrows():
         inst = r['Institution']
         repoName = r['Repository Name']
         rURL = r['URL']
-        countItems = r['Items in repository on 2019-05-27']
+        countItems = int(r['Items in repository on 2019-05-27'])
         ir_ramp_data = ramp_data[(ramp_data['index'] == pc_index) &
                                 (ramp_data['citableContent'] == 'Yes') &
                                 (ramp_data['clicks'] > 0)].copy()
@@ -414,8 +414,8 @@ for i, r in ir_info.iterrows():
         irPlat = r['Platform']
         normIrPlat = r['Normalized_Platform']
         ctMethod = r['Item Count Method']
-        ctEtd = r['ETD on 2019-06-07']
-        pctEtd = ctEtd / countItems
+        ctEtd = int(r['ETD on 2019-06-07'])
+        pctEtd = round(ctEtd / countItems, 2)
         gsSO = r['GS site operator 2019-06-07']
         tdf = pd.DataFrame([[ir, pc_index, ai_index, inst, repoName, rURL, countItems, countCcdUrls, countItemUrls,
                              useRatio, sumCcd, ccdAggSum, ccdAggCount, ccdAggMean, ccdAggStd, ccdAggMin, ccdAgg25,

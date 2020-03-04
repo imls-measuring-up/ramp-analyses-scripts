@@ -13,9 +13,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## R Markdown
 
-This is the same analysis Minh provided, but the data used are only from the 35 IR identified for the study.
+These are the calculations used to generate the tables and figures in the manuscript.
 
-Update file paths as needed to run locally.
+File paths for imports are relative to the structure of the GitHub repository. Update file paths as needed.
 
 ```{r}
 setwd('.')
@@ -59,11 +59,9 @@ country_device <- country_device[, c(-5)]
 ```{r}
 length(unique(country_device$country))
 ```
-This next code block looks like it should correspond to table 11 in the manuscript, but
-the output is different. 
 
-Minh's original output is also different from what is in the manuscript. I'm not sure where the
-data in the manuscript come from.
+The next two code blocks are for table 11 and figure 10.
+
 ```{r}
 country_device %>% 
   select(clicks, device) %>% 

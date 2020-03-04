@@ -1,0 +1,163 @@
+---
+title: "RAMP Country-Device Analyses"
+author: "Minh Pham, Nikolaus Parulian, Jon Wheeler"
+date: "3/2/2020"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is the same analysis Minh provided, but the data used are only from the 35 IR identified for the study.
+
+Update file paths as needed to run locally.
+
+```{r}
+setwd('.')
+library(rio)
+library(dplyr)
+library(psych)
+dat1 <- import("../ramp_data/2019-01_RAMP_subset_country-device-info.csv")
+dat2 <- import("../ramp_data/2019-02_RAMP_subset_country-device-info.csv")
+dat3 <- import("../ramp_data/2019-03_RAMP_subset_country-device-info.csv")
+dat4 <- import("../ramp_data/2019-04_RAMP_subset_country-device-info.csv")
+dat5 <- import("../ramp_data/2019-05_RAMP_subset_country-device-info.csv")
+str(dat1)
+```
+```{r}
+str(dat2)
+```
+```{r}
+str(dat3)
+```
+```{r}
+str(dat4)
+```
+```{r}
+str(dat5)
+```
+```{r}
+dat1 <- dat1[, c(-2, -5, -6)]
+dat2 <- dat2[, c(-2, -5, -6)]
+dat3 <- dat3[, c(-2, -5, -6)]
+dat4 <- dat4[, c(-2, -5, -6)]
+dat5 <- dat5[, c(-2, -5, -6)]
+country_device <- rbind(dat1, dat2)
+country_device <- rbind(country_device, dat3)
+country_device <- rbind(country_device, dat4)
+country_device <- rbind(country_device, dat5)
+length(unique(country_device$index))
+```
+```{r}
+country_device <- country_device[, c(-5)]
+```
+```{r}
+length(unique(country_device$country))
+```
+This next code block looks like it should correspond to table 11 in the manuscript, but
+the output is different. 
+
+Minh's original output is also different from what is in the manuscript. I'm not sure where the
+data in the manuscript come from.
+```{r}
+country_device %>% 
+  select(clicks, device) %>% 
+  group_by(device) %>% 
+  summarise(clicks = sum(clicks)) %>% 
+  arrange(desc(clicks)) %>% 
+  mutate(percent = clicks/sum(clicks)*100)
+```
+Here's some code that reproduces the data we have in table 11 now:
+
+```{r}
+country_device %>% 
+  select(clicks, device) %>% 
+  group_by(device) %>% 
+  summarise(device_row_count = sum(!is.na(clicks))) %>% 
+  arrange(desc(device_row_count)) %>% 
+  mutate(percent = device_row_count/4333430*100)
+```
+
+```{r}
+dat6 <- import('../ir_data/North_South.xlsx')
+head(dat6)
+```
+```{r}
+length(dat6$Countryabbre)
+```
+```{r}
+dat6$Countryabbre <- tolower(dat6$Countryabbre)
+head(dat6)
+```
+```{r}
+country_device_n <- merge(country_device, dat6, by.x = "country", by.y = "Countryabbre")
+length(unique(country_device_n$country))
+```
+```{r}
+dat7 <- unique(country_device$country)
+dat8 <- unique(dat6$Countryabbre)
+dat7[!(dat7 %in% dat8)]
+```
+```{r}
+dat8[!(dat8 %in% dat7)]
+```
+```{r}
+write.csv(country_device_n, file = '../ir_data/country_device_n.csv')
+```
+```{r}
+describeBy(country_device_n$clicks, country_device_n$device)
+```
+
+```{r}
+describeBy(country_device_n$position, country_device_n$device)
+```
+```{r}
+country_device_n %>% select(clicks, country) %>% 
+  group_by(country) %>% 
+  summarise(clicks = sum(clicks)) %>% 
+  arrange(desc(clicks)) %>% 
+  head(5)
+```
+
+
+```{r}
+country_device_n$Location <- as.factor(country_device_n$Location)
+```
+```{r}
+country_device_n %>% 
+  select(clicks, Location) %>% 
+  group_by(Location) %>% 
+  summarise(clicks = sum(clicks)) %>% 
+  arrange(desc(clicks)) %>% 
+  mutate(percent = clicks/sum(clicks)*100)
+```
+```{r}
+country_device_n%>%
+  select(clicks, device, Location)%>%
+  group_by(Location, device)%>%
+  summarise(clicks = sum(clicks))%>%
+  arrange(desc(clicks))%>%
+  mutate(percent = clicks/sum(clicks)*100)
+```
+```{r}
+mean(country_device_n$clicks)
+```
+```{r}
+var(country_device_n$clicks)
+```
+```{r}
+range(country_device_n$clicks)
+```
+```{r}
+mod <- glm(clicks~position*device, data = country_device_n, family = c("quasipoisson"))
+summary(mod)
+```
+```{r}
+round(cbind(exp(coef(mod)),
+            exp(confint(mod))),3)
+```

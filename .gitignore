@@ -1,6 +1,7 @@
 *~
 ramp_data/*.csv
 results/*.csv
+!results/RAMP-IR-info_2020-01-09.csv
 *pdf
 *docx
 .Rhistory

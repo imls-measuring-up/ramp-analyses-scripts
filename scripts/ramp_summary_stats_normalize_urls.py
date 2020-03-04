@@ -414,8 +414,13 @@ for i, r in ir_info.iterrows():
         irPlat = r['Platform']
         normIrPlat = r['Normalized_Platform']
         ctMethod = r['Item Count Method']
-        ctEtd = int(r['ETD on 2019-06-07'])
-        pctEtd = round(ctEtd / countItems, 2)
+        ctEtd = r['ETD on 2019-06-07']
+        # Some IR don't have ETD
+        pctEtd = 0
+        if ctEtd == '.':
+            pctEtd = '.'
+        else:
+            pctEtd = round(int(ctEtd) / countItems, 2)
         gsSO = r['GS site operator 2019-06-07']
         tdf = pd.DataFrame([[ir, pc_index, ai_index, inst, repoName, rURL, countItems, countCcdUrls, countItemUrls,
                              useRatio, sumCcd, ccdAggSum, ccdAggCount, ccdAggMean, ccdAggStd, ccdAggMin, ccdAgg25,

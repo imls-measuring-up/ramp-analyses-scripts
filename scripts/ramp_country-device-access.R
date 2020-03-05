@@ -13,6 +13,8 @@ library(rio)
 library(dplyr)
 library(psych)
 
+setwd('.')
+
 ## Read the csv file with descriptive statistics for RAMP IR.
 ## Note the filename incluces a date, which may need to be updated
 ## depending on when the generating script was run.

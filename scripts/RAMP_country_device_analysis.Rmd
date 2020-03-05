@@ -15,13 +15,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 These are the calculations used to generate the tables and figures in the manuscript.
 
-File paths for imports are relative to the structure of the GitHub repository. Update file paths as needed.
+File paths for data file imports are relative to the structure of the GitHub repository. Update file paths as needed. If this notebook was downloaded with the GitHub repository, it should work as-is.
+
+Packages imported in the next code block can be installed from CRAN as needed.
 
 ```{r}
 setwd('.')
 library(rio)
 library(dplyr)
 library(psych)
+```
+### Page Click Analysis
+
+The article includes two different analyses of RAMP data. The first analysis uses Google Search Console (GSC) API
+
+```
 dat1 <- import("../ramp_data/2019-01_RAMP_subset_country-device-info.csv")
 dat2 <- import("../ramp_data/2019-02_RAMP_subset_country-device-info.csv")
 dat3 <- import("../ramp_data/2019-03_RAMP_subset_country-device-info.csv")

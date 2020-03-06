@@ -1,4 +1,5 @@
 *~
+ir_data/North_South.csv
 ramp_data/*.csv
 results/*.csv
 !results/RAMP_summary_stats_20200109.csv

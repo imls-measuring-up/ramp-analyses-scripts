@@ -21,7 +21,7 @@ File paths for data file imports are relative to the structure of the GitHub rep
 
 Packages imported in the next code block can be installed from CRAN as needed.
 
-```{r load_packages}
+```{r load_packages, echo=TRUE}
 setwd('.')
 library(rio)
 library(dplyr)
@@ -43,7 +43,7 @@ This analysis uses information about RAMP IR that was manually gathered in May a
 
 The summary statistics used for the reported analysis were generated on January 9, 2020. The output is included in the GitHub repository and is referenced in the corresponding import path below. Note that the script and data needed to reproduce those same summary stats are included in this GitHub repository. Interested parties are invited to redo the aggregation and run this notebook against the new output. If the same data are used, any discrepancies with published results should be brought to the authors' attention.
 
-```{r import_RAMP_summary_stats}
+```{r import_RAMP_summary_stats, echo=TRUE}
 ## Read the csv file with descriptive statistics for RAMP IR.
 ## Note the filename incluces a date, which may need to be updated.
 
@@ -61,7 +61,7 @@ IR <- import("../results/RAMP_summary_stats_20200109.csv")
 length(IR$ir)
 summary(IR$countItems)
 ```
-```{r table_2}
+```{r table_2, echo=TRUE}
 ## Item counts summarized by platform.
 IR%>% 
   group_by(normIrPlat)%>% 
@@ -70,7 +70,7 @@ IR%>%
 IR$Platform <- factor(IR$normIrPlat, levels = c("DSpace", "Digital Commons", "EPrints", "Fedora"))
 describeBy(IR$countItems, IR$Platform)
 ```
-```{r table_3}
+```{r table_3, echo=TRUE}
 ## Item counts summarized by country where the IR are located.
 IR%>% 
   group_by(irCountry)%>% 
@@ -81,7 +81,7 @@ describeBy(IR$countItems, IR$irCountry)
 
 ```
 
-```{r table_4}
+```{r table_4, echo=TRUE}
 ## Item counts by Type of Host Organization - University of Consortium
 IR%>% 
   group_by(irType)%>% 
@@ -93,20 +93,66 @@ describeBy(IR$countItems, IR$irType)
 
 #### About Table 5
 
-Table 5 is a representation of the information in the file _RAMP_summary_stats_20200109.csv_, sorted by IR country and organizational type (university or consortia). The table in the article is formatted somewhat differently, but the following code block provides the necessary logic.
+Table 5 is a representation of the information in the file *RAMP_summary_stats_20200109.csv*, sorted by IR country and organizational type (university or consortia). The table in the article is formatted somewhat differently, but the following code block provides the necessary logic.
 
-```{r table_5}
+```{r table_5, echo=TRUE}
 IR %>% 
   select(irCountry, irType, repoName, normIrPlat, countItems) %>% 
   arrange(irCountry, desc(irType), desc(countItems))
 ```
 
-```{r use_ratio_categories}
+```{r use_ratio_categories, echo=TRUE}
 ## Create use ratio category. Item count by category.
 IR$category <- ifelse(IR$useRatio<=.5 & IR$countItems > 51000, "High Item Low Downloads",
                       ifelse(IR$useRatio>=.51 & IR$countItems<= 17979,"Low items High Downloads", "Low items Low Downloads"))
 table(IR$category)
 ```
+
+```{r table_6_summary_stats, echo=TRUE}
+# Items in use ratio category
+IR$category <- factor(IR$category, levels = c("High Item Low Downloads", "Low items Low Downloads", "Low items High Downloads"))
+describeBy(IR$countItems, IR$category)
+```
+```{r table_6_totals, echo=TRUE}
+IR%>% 
+  group_by(category)%>% 
+  summarise(sum = sum(countItems))%>%
+  arrange(desc(sum))
+```
+
+```{r table_7, echo=TRUE}
+# Use ratio category
+describeBy(IR$useRatio, IR$category)
+```
+```{r, table_8, echo=TRUE}
+# Items vs. Use ratio
+mean(IR$countItems)
+IR$Items <- ifelse(
+  IR$countItems < 34927.51, "Below Average", "Above Average"
+)
+IR$Items <- as.factor(IR$Items)
+describeBy(IR$useRatio, IR$Items)
+```
+
+```{r table_9, echo=TRUE}
+# Use ratio per platform
+IR$normIrPlat <- factor(IR$normIrPlat, levels = c("EPrints", "Fedora", "DSpace", "Digital Commons"))
+describeBy(IR$useRatio, IR$normIrPlat)
+```
+
+#### About Table 10
+
+Table 10 is a representation of the information in the file *RAMP_summary_stats_20200109.csv*, sorted use ratio. The table in the article is formatted somewhat differently, but the following code block provides the necessary logic.
+
+```{r table_10, echo=TRUE}
+IR %>% 
+  select(repoName, countItems, countItemUrls, useRatio) %>% 
+  arrange(desc(useRatio))
+```
+
+### Country-Device Analysis
+
+Info here.
 
 ```{r import_country_device_RAMP_data}
 dat1 <- import("../ramp_data/2019-01_RAMP_subset_country-device-info.csv")

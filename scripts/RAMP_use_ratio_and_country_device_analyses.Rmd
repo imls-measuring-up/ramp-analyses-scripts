@@ -154,7 +154,7 @@ IR %>%
 
 Info here.
 
-```{r import_country_device_RAMP_data}
+```{r import_country_device_RAMP_data, echo=TRUE}
 dat1 <- import("../ramp_data/2019-01_RAMP_subset_country-device-info.csv")
 dat2 <- import("../ramp_data/2019-02_RAMP_subset_country-device-info.csv")
 dat3 <- import("../ramp_data/2019-03_RAMP_subset_country-device-info.csv")
@@ -184,35 +184,64 @@ country_device <- rbind(dat1, dat2)
 country_device <- rbind(country_device, dat3)
 country_device <- rbind(country_device, dat4)
 country_device <- rbind(country_device, dat5)
+rm(dat1, dat2, dat3, dat4, dat5)
 length(unique(country_device$index))
 ```
+
+The next two code blocks are for table 11 and figure 10.
+
+```{r table_11, echo=TRUE}
+country_device %>% 
+  select(clicks, device) %>% 
+  group_by(device) %>% 
+  summarise(count = sum(!is.na(device)), clicks = sum(clicks)) %>% 
+  arrange(desc(clicks)) %>% 
+  mutate(percent = clicks/sum(clicks)*100)
+```
+
+```{r figure_10, echo=TRUE}
+country_device %>% 
+  select(clicks, device, index) %>% 
+  group_by(index, device) %>% 
+  summarise(total_clicks = sum(clicks)) %>% 
+  arrange(index, desc(total_clicks)) %>% 
+  mutate(pct_clicks_device = total_clicks/sum(total_clicks)*100)
+```
+
+Note that this table/figure are not in the current draft. Because of how the country-device data are aggregated by GSC, we cannot assert that a count of occurrences of devices within the data represents a count of _visits_ by device. This is because the data are aggregated by combination of country and device. For example, we may see on any given day that the UNM Digital Repository received a certain number of clicks from desktops users in the United States. However, since these clicks are aggregated by combination of country and device, we don't know how many individual desktop users in the US visited UNM's IR on that day. 
+
+A figure representing the table produced by the next chunk has been removed from the manscript, but the table may be of interest as long as the difference between "occurrence" and "visit" is understood.
+
+```{r figure_10_removed, echo=TRUE}
+country_device %>% 
+  select(device, index) %>% 
+  group_by(index, device) %>% 
+  summarise(count_device_occurrence = sum(!is.na(device))) %>% 
+  arrange(index, desc(count_device_occurrence)) %>% 
+  mutate(pct_access_device = count_device_occurrence/sum(count_device_occurrence)*100)
+```
+
+Tables 12 and 13, Figure 11
+
 ```{r}
+mod <- glm(clicks~position*device, data = country_device, family = c("quasipoisson"))
+summary(mod)
+```
+```{r}
+round(cbind(exp(coef(mod)),
+            exp(confint(mod))),3)
+```
+
+
+
+```{r, echo=TRUE}
 country_device <- country_device[, c(-5)]
 ```
 ```{r}
 length(unique(country_device$country))
 ```
 
-The next two code blocks are for table 11 and figure 10.
 
-```{r}
-country_device %>% 
-  select(clicks, device) %>% 
-  group_by(device) %>% 
-  summarise(clicks = sum(clicks)) %>% 
-  arrange(desc(clicks)) %>% 
-  mutate(percent = clicks/sum(clicks)*100)
-```
-Here's some code that reproduces the data we have in table 11 now:
-
-```{r}
-country_device %>% 
-  select(clicks, device) %>% 
-  group_by(device) %>% 
-  summarise(device_row_count = sum(!is.na(clicks))) %>% 
-  arrange(desc(device_row_count)) %>% 
-  mutate(percent = device_row_count/4333430*100)
-```
 
 ```{r}
 dat6 <- import('../ir_data/North_South.csv')

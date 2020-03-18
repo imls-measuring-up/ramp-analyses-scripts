@@ -223,6 +223,14 @@ country_device %>%
 
 Tables 12 and 13, Figure 11
 
+```{r table_12_clicks, echo=TRUE}
+describeBy(country_device$clicks, country_device$device)
+```
+
+```{r table_12_position, echo=TRUE}
+describeBy(country_device$position, country_device$device)
+```
+
 ```{r}
 mod <- glm(clicks~position*device, data = country_device, family = c("quasipoisson"))
 summary(mod)

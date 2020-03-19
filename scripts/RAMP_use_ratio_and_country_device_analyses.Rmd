@@ -249,10 +249,20 @@ country_device <- country_device[, c(-5)]
 length(unique(country_device$country))
 ```
 
+From here on is the code for the global north/south device usage analysis. This requires an additional import of manually tabulated data that merges global north/south designations per country with ISO three letter country codes. 
 
+Data sources to cite:
+
+https://meta.wikimedia.org/wiki/List_of_countries_by_regional_classification
+
+https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
+
+https://www.iso.org/iso-3166-country-codes.html
+
+Data were manually tabulated/merged by Minh Pham.
 
 ```{r}
-dat6 <- import('../ir_data/North_South.csv')
+dat6 <- import('../country_codes/north_south.csv')
 head(dat6)
 ```
 ```{r}
@@ -274,9 +284,9 @@ dat7[!(dat7 %in% dat8)]
 ```{r}
 dat8[!(dat8 %in% dat7)]
 ```
-```{r}
-write.csv(country_device_n, file = '../ir_data/country_device_n.csv')
-```
+##```{r}
+##write.csv(country_device_n, file = '../ir_data/country_device_n.csv')
+##```
 ```{r}
 describeBy(country_device_n$clicks, country_device_n$device)
 ```

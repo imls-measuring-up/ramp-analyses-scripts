@@ -240,14 +240,7 @@ round(cbind(exp(coef(mod)),
             exp(confint(mod))),3)
 ```
 
-
-
-```{r, echo=TRUE}
-country_device <- country_device[, c(-5)]
-```
-```{r}
-length(unique(country_device$country))
-```
+## Access by country, and device use across countries from the global north and south
 
 From here on is the code for the global north/south device usage analysis. This requires an additional import of manually tabulated data that merges global north/south designations per country with ISO three letter country codes. 
 
@@ -261,6 +254,13 @@ https://www.iso.org/iso-3166-country-codes.html
 
 Data were manually tabulated/merged by Minh Pham.
 
+```{r, echo=TRUE}
+country_device <- country_device[, c(-5)]
+```
+```{r}
+length(unique(country_device$country))
+```
+
 ```{r}
 dat6 <- import('../country_codes/north_south.csv')
 head(dat6)
@@ -268,25 +268,64 @@ head(dat6)
 ```{r}
 length(dat6$Countryabbre)
 ```
+
+Convert country codes to lowercase. They are lowercase in the RAMP data, so this allows us to merge.
+
 ```{r}
 dat6$Countryabbre <- tolower(dat6$Countryabbre)
 head(dat6)
 ```
+
+This is the merge. Note the count of unique "country" values in the merged dataset is 2 less than it was before the merge. 
+
 ```{r}
 country_device_n <- merge(country_device, dat6, by.x = "country", by.y = "Countryabbre")
 length(unique(country_device_n$country))
 ```
+
+Look at the difference. First look at country codes from RAMP that are not in the *north_south.csv* file.
+
+The unmatched codes are "zzz" and "xkk," which are (most likely) GSC codes for "unknown region." These data should be dropped from global north/south analyses, since we cannot make a determination of global north/south status for the corresponding search result data.
+
+Dropping these data means that the click sums and row counts by device will not have the same totals in the following analysis as are presented in table 11. Row counts and click sums for these unknown region codes are presented here to document the difference.
+
 ```{r}
 dat7 <- unique(country_device$country)
 dat8 <- unique(dat6$Countryabbre)
 dat7[!(dat7 %in% dat8)]
 ```
 ```{r}
+
+unknown_region <- country_device %>% filter(country == 'zzz' | country == 'xkk')
+```
+
+```{r, echo=TRUE}
+unknown_region %>% 
+  select(clicks, device) %>% 
+  group_by(device) %>% 
+  summarise(count = sum(!is.na(device)), clicks = sum(clicks)) %>% 
+  arrange(desc(clicks)) %>% 
+  mutate(percent = clicks/sum(clicks)*100)
+```
+
+
+```{r, echo=TRUE}
+country_device_n %>% 
+  select(clicks, device) %>% 
+  group_by(device) %>% 
+  summarise(count = sum(!is.na(device)), clicks = sum(clicks)) %>% 
+  arrange(desc(clicks)) %>% 
+  mutate(percent = clicks/sum(clicks)*100)
+```
+
+Adding the "count" and "clicks" values per device in the two tables above provides the same results as table 11, which indicates that there are no known regions that are unaccounted for in the *country_device_n* dataframe.
+
+Next we identify countries that are in the country code data but not in RAMP. This just means there were no searches conducted from these countries between Jan 1 and May 31, 2019, which returned RAMP IR content in the SERP. So there is nothing to fix here.
+
+```{r}
 dat8[!(dat8 %in% dat7)]
 ```
-##```{r}
-##write.csv(country_device_n, file = '../ir_data/country_device_n.csv')
-##```
+
 ```{r}
 describeBy(country_device_n$clicks, country_device_n$device)
 ```
@@ -294,7 +333,7 @@ describeBy(country_device_n$clicks, country_device_n$device)
 ```{r}
 describeBy(country_device_n$position, country_device_n$device)
 ```
-```{r}
+```{r table_14}
 country_device_n %>% select(clicks, country) %>% 
   group_by(country) %>% 
   summarise(clicks = sum(clicks)) %>% 
@@ -306,7 +345,7 @@ country_device_n %>% select(clicks, country) %>%
 ```{r}
 country_device_n$Location <- as.factor(country_device_n$Location)
 ```
-```{r}
+```{r table_15}
 country_device_n %>% 
   select(clicks, Location) %>% 
   group_by(Location) %>% 
@@ -330,12 +369,4 @@ var(country_device_n$clicks)
 ```
 ```{r}
 range(country_device_n$clicks)
-```
-```{r}
-mod <- glm(clicks~position*device, data = country_device_n, family = c("quasipoisson"))
-summary(mod)
-```
-```{r}
-round(cbind(exp(coef(mod)),
-            exp(confint(mod))),3)
 ```

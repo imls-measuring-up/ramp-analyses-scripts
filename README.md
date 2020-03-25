@@ -3,8 +3,7 @@
 
 ## To Do:
 
-1. Document analysis scripts, including dependencies.
-1. Execute all scripts and verify output against the reported findings.
+1. Document north_south.csv, add citations to source data referenced in the R markdown.
 
 ## Verifying the Analysis:
 

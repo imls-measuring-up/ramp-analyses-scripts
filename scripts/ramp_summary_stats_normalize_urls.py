@@ -104,6 +104,45 @@ def make_dspace_html_url(bitstream_url):
             return p.scheme + '://' + p.netloc + '/' + 'handle' + h.group()
 
 
+def make_dspace_item_uri(bitstream_url):
+    """For DSpace IR, generate a URL for an HTML page that contains a bitstream
+       that has a positive click count in RAMP. Basically, this function attempts
+       to infer or reverse-engineer the URL of a bitstream's parent HTML page
+       using the bitstream's URL. For DSpace IR this requires extracting the item's
+       Handle from the bitstream URL and inserting it into an item URL.
+
+    Parameters
+    ----------
+
+    bitstream_url:
+        The URL of a DSpace bitstream with a positive click count in RAMP.
+
+    Returns
+    -------
+
+    An HTML URL:
+        The URL of the HTML page ("item") that includes the bitstream.
+        
+    """
+    
+    p = urlparse(bitstream_url)
+
+    # Compile a regular expression to find the DSpace handle in the bitstream URL.
+    handle = re.compile("\/[0-9\?\.]+\/[0-9][0-9]+")
+
+    # Search the bitstream URL for the UI type.
+    xmlui = re.compile('xmlui')
+    jspui = re.compile('jspui')
+    dspace = re.compile('dspace')
+    h = handle.search(p.path)
+    x = xmlui.search(p.path)
+    j = jspui.search(p.path)
+    ds = dspace.search(p.path)
+
+    # Construct and return the item HTML page.
+    if h:
+        return h.group()
+
 def make_eprints_fedora_html_url(pdf_url):
     """For EPrints and Fedora IR, generate a URL for an HTML page that contains a content file
        that has a positive click count in RAMP. Basically, this function attempts
@@ -138,6 +177,40 @@ def make_eprints_fedora_html_url(pdf_url):
         return p.scheme + '://' + p.netloc + pdf_id.group()
 
 
+def make_eprints_fedora_item_uri(pdf_url):
+    """For EPrints and Fedora IR, generate a URL for an HTML page that contains a content file
+       that has a positive click count in RAMP. Basically, this function attempts
+       to infer or reverse-engineer the URL of a file's parent HTML page
+       using the file's URL. For EPrints and Fedora IR this requires extracting the item's
+       internal ID number from the content file URL and inserting it into an item URL.
+       Note that for EPrints and Fedora IR, RAMP is currently only filtering activity
+       on PDF files, and does not filter activity on other content file types.
+
+    Parameters
+    ----------
+
+    pdf_url:
+        The URL of a PDF URL with a positive click count in RAMP.
+
+    Returns
+    -------
+
+    An HTML URL:
+        The URL of the HTML page ("item") that includes the PDF URL.
+        
+    """
+
+    p = urlparse(pdf_url)
+
+    # Compile a regular expression to find the internal ID numberof the item.
+    pdf_path = re.compile("\/[0-9][0-9]+")
+    pdf_id = pdf_path.search(p.path)
+
+    # Construct and return the item HTML page.
+    if pdf_id:
+        return pdf_id.group()
+
+
 def make_fedora_ne_html_url(pdf_url):
     """This function is the same as make_eprints_fedora_html_url,
        but the regular expression is modified to include a
@@ -164,7 +237,69 @@ def make_fedora_ne_html_url(pdf_url):
         return p.scheme + '://' + p.netloc + pdf_id.group()
 
 
-def make_bepress_oai_urls(pdf_url):
+def make_fedora_ne_item_uri(pdf_url):
+    """This function is the same as make_eprints_fedora_html_url,
+       but the regular expression is modified to include a
+       specific prefix present in all ID numbers.
+
+    Parameters
+    ----------
+
+    pdf_url:
+        The URL of a PDF URL with a positive click count in RAMP.
+
+    Returns
+    -------
+
+    An HTML URL:
+        The URL of the HTML page ("item") that includes the PDF URL.
+        
+    """
+
+    p = urlparse(pdf_url)
+    pdf_path = re.compile("\/files\/neu:[a-z0-9]+")
+    pdf_id = pdf_path.search(p.path)
+    if pdf_id:
+        return pdf_id.group()
+
+
+def make_bepress_oai_url(pdf_url):
+    """For BePress Digital Commons IR, generate an OAI-PMH identifier (UID) for an item
+       that contains a content file
+       that has a positive click count in RAMP. Basically, this function attempts
+       to infer or reverse-engineer the OAI-PMH UID of a file's parent HTML page
+       using the file's URL. For Digital Commons IR this requires extracting the item's
+       'context' and 'article' ID numbers from the content file URL and inserting
+       them into an OAI-PMH UID.
+
+    Parameters
+    ----------
+
+    pdf_url:
+        The URL of a PDF URL with a positive click count in RAMP.
+
+    Returns
+    -------
+
+    An OAI-PMH UID:
+        A UID that can be used to make an OAI-PMH request for the item that
+        contains the content file.
+        
+    """
+
+    p = urlparse(pdf_url)
+    base_url = 'oai:' + p.netloc + ':'
+    contextRe = re.compile(r'context=([a-z0-9_\-]*)')
+    articleRe = re.compile(r'article=([0-9][0-9][0-9][0-9])')
+    contextSearch = contextRe.search(pdf_url)
+    articleSearch = articleRe.search(pdf_url)
+    if contextSearch:
+        if articleSearch:
+            context = contextSearch.group().strip('context=')
+            article = articleSearch.group().strip('article=')
+            return base_url + str(context) + '-' + str(article)
+
+def make_bepress_item_uri(pdf_url):
     """For BePress Digital Commons IR, generate an OAI-PMH identifier (UID) for an item
        that contains a content file
        that has a positive click count in RAMP. Basically, this function attempts
@@ -228,14 +363,19 @@ def construct_html_urls(ir_data, platform):
 
     if platform == 'DSpace':
         ir_data['html_url'] = ir_ramp_data['url'].apply(make_dspace_html_url)
+        ir_data['unique_item_uri'] = ir_ramp_data['url'].apply(make_dspace_item_uri) 
     if platform == 'EPrints 3':
         ir_data['html_url'] = ir_ramp_data['url'].apply(make_eprints_fedora_html_url)
+        ir_data['unique_item_uri'] = ir_ramp_data['url'].apply(make_eprints_fedora_item_uri)
     if platform == 'Fedora/Samvera':
         ir_data['html_url'] = ir_ramp_data['url'].apply(make_fedora_ne_html_url)
+        ir_data['unique_item_uri'] = ir_ramp_data['url'].apply(make_fedora_ne_item_uri)
     if platform == 'Fedora':
         ir_data['html_url'] = ir_ramp_data['url'].apply(make_eprints_fedora_html_url)
+        ir_data['unique_item_uri'] = ir_ramp_data['url'].apply(make_eprints_fedora_item_uri)
     if platform == 'Digital Commons':
-        ir_data['html_url'] = ir_ramp_data['url'].apply(make_bepress_oai_urls)
+        ir_data['html_url'] = ir_ramp_data['url'].apply(make_bepress_oai_url)
+        ir_data['unique_item_uri'] = ir_ramp_data['url'].apply(make_bepress_item_uri)
     return ir_data
 
 # Set paths to data and output directories. Update as needed.
@@ -316,8 +456,9 @@ cols = ['ir',                                            # ir_index_root
         'rURL',                                          # URL
         'countItems',                                    # Items in repository on 2019-05-27
         'countCcdUrls',                                  # COUNT unique CC URLs Jan1 to May31 2019
-        'countItemUrls',                                 # COUNT unique ITEM URLs in RAMP Jan1 to May31
-        'useRatio',                                      # Use Ratio (COUNT unique ITEM URLS in RAMP/ COUNT items in IR)
+        'countItemUrls',                                 # COUNT undeduplicated (including both http & https of a single URL) ITEM URLs in RAMP Jan1 to May31
+        'countItemUris',                                 # COUNT unique (deduplicated) ITEM URLS and/or OAI identifiers
+        'useRatio',                                      # Use Ratio (COUNT unique ITEM URIS in RAMP/ COUNT items in IR)
         'sumCcd',                                        # SUM of CCD in full dataset
         'ccdAggSum',                                     # SUM of clicks on unique CC urls (should equal sumCcd)
         'ccdAggCount',                                   # COUNT of unique CC urls (should equal countCcdUrls)
@@ -328,15 +469,15 @@ cols = ['ir',                                            # ir_index_root
         'ccdAgg50',                                      # Second quartile num clicks on CC urls
         'ccdAgg75',                                      # Third quartile num clicks on CC urls
         'ccdAggMax',                                     # Max number of clicks on CC urls
-        'itemAggSum',                                    # SUM of clicks on unique ITEM urls (should equal sumCcd)
-        'itemAggCount',                                  # COUNT of unique ITEM urls (should equal countItemUrls)
-        'itemAggMean',                                   # Average clicks per ITEM url
-        'itemAggStd',                                    # Standard deviation of clicks on ITEM urls
-        'itemAggMin',                                    # Minimum number of clicks on ITEM urls
-        'itemAgg25',                                     # First quartile num clicks on ITEM urls
-        'itemAgg50',                                     # Second quartile num clicks on ITEM urls
-        'itemAgg75',                                     # Third quartile num clicks on ITEM urls
-        'itemAggMax',                                    # Max number of clicks on ITEM urls
+        'itemAggSum',                                    # SUM of clicks on unique ITEM uris (should equal sumCcd)
+        'itemAggCount',                                  # COUNT of unique ITEM uris (should equal countItemUrls)
+        'itemAggMean',                                   # Average clicks per ITEM uri
+        'itemAggStd',                                    # Standard deviation of clicks on ITEM uris
+        'itemAggMin',                                    # Minimum number of clicks on ITEM uris
+        'itemAgg25',                                     # First quartile num clicks on ITEM uris
+        'itemAgg50',                                     # Second quartile num clicks on ITEM uris
+        'itemAgg75',                                     # Third quartile num clicks on ITEM uris
+        'itemAggMax',                                    # Max number of clicks on ITEM uris
         'serp1',                                         # COUNT CCD URLs with Position <=10'
         'serp1CcdSum',                                   # SUM CCD clicks on URLs with Position <=10
         'serp100',                                       # COUNT CCD URLs with Position <=1000
@@ -368,9 +509,7 @@ for i, r in ir_info.iterrows():
         repoName = r['Repository Name']
         rURL = r['URL']
         countItems = int(r['Items in repository on 2019-05-27'])
-        ir_ramp_data = ramp_data[(ramp_data['index'] == pc_index) &
-                                (ramp_data['citableContent'] == 'Yes') &
-                                (ramp_data['clicks'] > 0)].copy()
+        ir_ramp_data = ramp_data[(ramp_data['index'] == pc_index) & (ramp_data['citableContent'] == 'Yes') & (ramp_data['clicks'] > 0)].copy()
         """
         Deduplicate item URLs. A more detailed definition of what an "item"
         is in this context is included in the data table definitions
@@ -379,7 +518,8 @@ for i, r in ir_info.iterrows():
         ir_ramp_data = construct_html_urls(ir_ramp_data, r['Platform'])
         countCcdUrls = len(pd.unique(ir_ramp_data['url']))
         countItemUrls = len(pd.unique(ir_ramp_data['html_url']))
-        useRatio = round(countItemUrls / countItems, 2)
+        countItemUris = len(pd.unique(ir_ramp_data['unique_item_uri']))
+        useRatio = round(countItemUris / countItems, 2)
         sumCcd = ir_ramp_data['clicks'].sum()
         ccdAgg = ir_ramp_data.groupby('url').agg({'clicks': 'sum'})
         ccdAggSum = ccdAgg['clicks'].sum()
@@ -392,7 +532,7 @@ for i, r in ir_info.iterrows():
         ccdAgg50 = ccdAggDesc.loc['50%'][0]
         ccdAgg75 = ccdAggDesc.loc['75%'][0]
         ccdAggMax = ccdAggDesc.loc['max'][0]
-        itemAgg = ir_ramp_data.groupby('html_url').agg({'clicks': 'sum'})
+        itemAgg = ir_ramp_data.groupby('unique_item_uri').agg({'clicks': 'sum'})
         itemAggSum = itemAgg['clicks'].sum()
         itemAggDesc = itemAgg.describe()
         itemAggCount = itemAggDesc.loc['count'][0]
@@ -423,7 +563,7 @@ for i, r in ir_info.iterrows():
             pctEtd = round(int(ctEtd) / countItems, 2)
         gsSO = r['GS site operator 2019-06-07']
         tdf = pd.DataFrame([[ir, pc_index, ai_index, inst, repoName, rURL, countItems, countCcdUrls, countItemUrls,
-                             useRatio, sumCcd, ccdAggSum, ccdAggCount, ccdAggMean, ccdAggStd, ccdAggMin, ccdAgg25,
+                             countItemUris, useRatio, sumCcd, ccdAggSum, ccdAggCount, ccdAggMean, ccdAggStd, ccdAggMin, ccdAgg25,
                              ccdAgg50, ccdAgg75, ccdAggMax, itemAggSum, itemAggCount, itemAggMean, itemAggStd,
                              itemAggMin, itemAgg25, itemAgg50, itemAgg75, itemAggMax,
                              serp1, serp1CcdSum, serp100, serp100CcdSum, irCountry, irType,
@@ -436,4 +576,3 @@ for i, r in ir_info.iterrows():
 outDf.to_csv(results_dir + "RAMP_summary_stats_" + str(fname_date) + ".csv", index=False)
 
 print("Done. The output file, 'RAMP_summary_stats_" + str(fname_date) + ".csv' is in the 'results' directory.")
-

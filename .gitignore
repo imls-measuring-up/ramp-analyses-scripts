@@ -4,6 +4,7 @@ ir_data/*.csv
 ramp_data/*.csv
 results/*.csv
 !results/RAMP_summary_stats_20200109.csv
+!results/RAMP_summary_stats_20200907.csv
 *html
 *pdf
 *docx

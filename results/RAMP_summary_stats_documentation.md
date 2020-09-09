@@ -111,7 +111,7 @@ is deduplicated to arrive at a count of clicked-on content file URLs.
 > Data type: integer
 
 > Description: Content file URLs as defined above are typically nested within item HTML pages in IR. This
-variable represents the count of unique item HTML pages that contain content file URLs
+variable represents the count of item HTML pages that contain content file URLs
 with positive click values in RAMP. For an example, see the following dataset:
 
 >>>OBrien P, Arlitsch K, Sterman L, Mixter J, Wheeler J, Borda S (2016) Dataset supporting study on Undercounting
@@ -119,7 +119,24 @@ File Downloads from Institutional Repositories [dataset]. Montana State Universi
 http://doi.org/10.15788/M2Z59N
 
 > In this example, even though the item includes seven content files, the "item URL"  for the purposes of this variable
-is the item's page in the IR at <https://scholarworks.montana.edu/xmlui/handle/1/9939>.
+is the item's page in the IR at <https://scholarworks.montana.edu/xmlui/handle/1/9939>. It should be noted that
+a single item may be represented in RAMP data with URLs using both http and https protocols. This column
+presents the count of all item URLs and has not been deduplicated, as a comparison with a count of deduplicated items
+may be of interest.
+
+> Data source: Citable content URLs as described above are processed to infer the URL of the parent item's 
+HTML page. This process is platform dependent, with platform specific functions defined in the Python script
+"ramp_summary_stats_normalize_urls.py." 
+
+**countItemUris**
+
+> Data type: integer
+
+> Description: As described above for the "countItemUrls" column, content file URLs as defined above are 
+typically nested within item HTML pages in IR. Since both the http and https versions of a URL represent 
+a single logical item, it is necessary to deduplicate the set of URLs represented by the "countItemUrls"
+column. This variable represents the count of deduplicated, unique item HTML pages that contain content file URLs
+with positive click values in RAMP. 
 
 > Data source: Citable content URLs as described above are processed to infer the URL of the parent item's 
 HTML page. This process is platform dependent, with platform specific functions defined in the Python script
@@ -129,13 +146,13 @@ HTML page. This process is platform dependent, with platform specific functions 
 
 > Data type: floating point
 
-> Description: The ratio of the number of items containing content files with positive click values in RAMP to the
+> Description: The ratio of the number of deduplicated items containing content files with positive click values in RAMP to the
 total number of items hosted by a repository. Use ratio as defined here does not differentiate between items that
 receive a single click on a content file versus items that receive many clicks on content files.
 
 > Data source: This ratio is calculated by "ramp_summary_stats_normalize_urls.py." The calculation is
 
->>>_countItemUrls_ / _countItems_
+>>>_countItemUris_ / _countItems_
 
 **sumCcd**
 
@@ -245,9 +262,9 @@ of citable content URLs that have positive click values.
 > Data type: integer
 
 > Description: Sum of clicks on citable content URLs, aggregated at the level of the parent items' HTML pages.
-This should be the same as the _sumCcd_ variable and is
+This value should be the same as or close to the _sumCcd_ variable and is
 included as a data integrity check against the filtering processes used to derive the _countCcdUrls_ and 
-_countItemUrls_ variables. _sumCcd_ is calculated before filtering, this variable is calculated after. For large
+_countItemUris_ variables. _sumCcd_ is calculated before filtering, this variable is calculated after. For large
 RAMP datasets some variation between this variable and _sumCcd_ is acceptable.
 
 > Data source: Google Search Console API.
@@ -257,9 +274,9 @@ RAMP datasets some variation between this variable and _sumCcd_ is acceptable.
 > Data type: integer
 
 > Description: Count of unique item HTML pages of items containing citable content URLs with positive click values in
-RAMP.  This should be the same as the _countItemUrls_ variable and is
+RAMP.  This value should be the same as or close to the _countItemUris_ variable and is
 included as a data integrity check against the filtering processes used to derive the _countCcdUrls_ and 
-_countItemUrls_ variables. For large RAMP datasets some variation between this variable and _countItemUrls_ 
+_countItemUris_ variables. For large RAMP datasets some variation between this variable and _countItemUris_ 
 is acceptable.
 
 > Data source: Google Search Console API.

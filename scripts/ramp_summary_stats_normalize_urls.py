@@ -105,11 +105,15 @@ def make_dspace_html_url(bitstream_url):
 
 
 def make_dspace_item_uri(bitstream_url):
-    """For DSpace IR, generate a URL for an HTML page that contains a bitstream
+    """For DSpace IR, generate a URI for an HTML page that contains a bitstream
        that has a positive click count in RAMP. Basically, this function attempts
        to infer or reverse-engineer the URL of a bitstream's parent HTML page
        using the bitstream's URL. For DSpace IR this requires extracting the item's
        Handle from the bitstream URL and inserting it into an item URL.
+
+       This is the same function as above, only instead of a URL, this returns
+       a unique URI that can be used to deduplicate HTML URLs where both
+       http and https protocols are present.
 
     Parameters
     ----------
@@ -120,15 +124,15 @@ def make_dspace_item_uri(bitstream_url):
     Returns
     -------
 
-    An HTML URL:
-        The URL of the HTML page ("item") that includes the bitstream.
+    An item URI:
+        A locally unique URI of the HTML page ("item") that includes the bitstream.
         
     """
     
     p = urlparse(bitstream_url)
 
     # Compile a regular expression to find the DSpace handle in the bitstream URL.
-    handle = re.compile("\/[0-9\?\.]+\/[0-9][0-9]+")
+    handle = re.compile("[0-9\?\.]+\/[0-9][0-9]+")
 
     # Search the bitstream URL for the UI type.
     xmlui = re.compile('xmlui')
@@ -186,6 +190,10 @@ def make_eprints_fedora_item_uri(pdf_url):
        Note that for EPrints and Fedora IR, RAMP is currently only filtering activity
        on PDF files, and does not filter activity on other content file types.
 
+       This is the same function as above, only instead of a URL, this returns
+       a unique URI that can be used to deduplicate HTML URLs where both
+       http and https protocols are present.
+
     Parameters
     ----------
 
@@ -195,15 +203,15 @@ def make_eprints_fedora_item_uri(pdf_url):
     Returns
     -------
 
-    An HTML URL:
-        The URL of the HTML page ("item") that includes the PDF URL.
+    An item URI:
+        A locally unique URI of the HTML page ("item") that includes the PDF URL.
         
     """
 
     p = urlparse(pdf_url)
 
     # Compile a regular expression to find the internal ID numberof the item.
-    pdf_path = re.compile("\/[0-9][0-9]+")
+    pdf_path = re.compile("[0-9][0-9]+")
     pdf_id = pdf_path.search(p.path)
 
     # Construct and return the item HTML page.
@@ -242,6 +250,10 @@ def make_fedora_ne_item_uri(pdf_url):
        but the regular expression is modified to include a
        specific prefix present in all ID numbers.
 
+       This is the same function as above, only instead of a URL, this returns
+       a unique URI that can be used to deduplicate HTML URLs where both
+       http and https protocols are present.
+
     Parameters
     ----------
 
@@ -251,13 +263,13 @@ def make_fedora_ne_item_uri(pdf_url):
     Returns
     -------
 
-    An HTML URL:
-        The URL of the HTML page ("item") that includes the PDF URL.
+    An item URI:
+        A locally unique URI of the HTML page ("item") that includes the PDF URL.
         
     """
 
     p = urlparse(pdf_url)
-    pdf_path = re.compile("\/files\/neu:[a-z0-9]+")
+    pdf_path = re.compile("neu:[a-z0-9]+")
     pdf_id = pdf_path.search(p.path)
     if pdf_id:
         return pdf_id.group()
@@ -308,6 +320,10 @@ def make_bepress_item_uri(pdf_url):
        'context' and 'article' ID numbers from the content file URL and inserting
        them into an OAI-PMH UID.
 
+       This is the same function as above, only instead of a URL, this returns
+       a unique URI that can be used to deduplicate HTML URLs where both
+       http and https protocols are present.
+
     Parameters
     ----------
 
@@ -318,7 +334,7 @@ def make_bepress_item_uri(pdf_url):
     -------
 
     An OAI-PMH UID:
-        A UID that can be used to make an OAI-PMH request for the item that
+        A locally unique UID that can be used to make an OAI-PMH request for the item that
         contains the content file.
         
     """
@@ -355,9 +371,12 @@ def construct_html_urls(ir_data, platform):
     -------
 
     ir_data:
-        The IR data is returned with a new column, 'html_url.' For each row,
+        The IR data is returned with two new columns, 'html_url' and
+        'unique_item_uri.' For each row,
         this is the URL of the HTML page of the item containing the content
-        file URL referenced by the 'url' column in RAMP.
+        file URL referenced by the 'url' column in RAMP, and a URI that
+        can be used to deduplicate items which are present in the dataset
+        with both http and https URLs.
         
     """
 
@@ -417,11 +436,11 @@ ramp_subset['2019-05_RAMP_subset_country-device-info.csv'] = ramp_201905_ai
 ramp_subset['2019-05_RAMP_subset_page-clicks_v2.csv'] = ramp_201905_pc
 
 # Download the data and save to the 'ramp_data' directory.
-for file_name, file_pointer in ramp_subset.items():
-    r = requests.get(file_pointer, stream=True)
-    with open(ramp_data_dir + file_name, 'wb') as dl:
-        for chunk in r.iter_content(chunk_size=512):
-            dl.write(chunk)
+#for file_name, file_pointer in ramp_subset.items():
+#    r = requests.get(file_pointer, stream=True)
+#    with open(ramp_data_dir + file_name, 'wb') as dl:
+#        for chunk in r.iter_content(chunk_size=512):
+#            dl.write(chunk)
 
 # Create a list to hold the names of individual RAMP data files.
 # Note that only page-click data are being used here.
@@ -516,6 +535,7 @@ for i, r in ir_info.iterrows():
         for the output file. See "RAMP_summary_stats_documentation.md."
         """
         ir_ramp_data = construct_html_urls(ir_ramp_data, r['Platform'])
+        ir_ramp_data.to_csv(results_dir + ir + "_ramp_data.csv", index=False)
         countCcdUrls = len(pd.unique(ir_ramp_data['url']))
         countItemUrls = len(pd.unique(ir_ramp_data['html_url']))
         countItemUris = len(pd.unique(ir_ramp_data['unique_item_uri']))

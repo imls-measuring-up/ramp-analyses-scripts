@@ -261,15 +261,14 @@ describeBy(country_device$position, country_device$device)
 
 From here on is the code for the global north/south device usage analysis. This requires an additional import of manually tabulated data that merges global north/south designations per country with ISO three letter country codes. 
 
-Data sources to cite:
+Citations to the data sources used for this information are listed below, in the _Data Sources_ section of this notebook. These data sources are also referenced in the bibliography of the manuscript. In brief, the data were collected from
 
-https://meta.wikimedia.org/wiki/List_of_countries_by_regional_classification
-
-https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
-
-https://www.iso.org/iso-3166-country-codes.html
-
-Data were manually tabulated from the above sources.
+* “ISO 3166-1 alpha-3”, available from Wikpedia at: https://en.wikipedia.org/w/index.php?title=ISO_3166-1_alpha-
+3&oldid=945527106
+* “List of countries by regional classification”, also available from Wikipedia at https://meta.wikimedia.org/w/index.php?title=List_of_countries_by_regional_classificati
+on&oldid=19943813
+* “ISO 3166 Country Codes”, available from ISO at: https://www.iso.org/iso-3166-countrycodes.
+html
 
 The following code blocks merge RAMP country-device data with global region codes. Some error checking is done on the result. 
 
@@ -389,3 +388,17 @@ country_device_n%>%
   arrange(desc(clicks))%>%
   mutate(percent = clicks/sum(clicks)*100)
 ```
+
+
+## Data Sources (other than RAMP data)
+
+International Organization for Standardization. (2020), “ISO 3166 Country Codes”, ISO, Nongovernmental organization, available at: https://www.iso.org/iso-3166-countrycodes.html (accessed 12 April 2020).
+
+Meta contributors. (2020), “List of countries by regional classification”, Wikimedia Meta-Wiki, Meta, discussion about Wikimedia projects, 1 April, available at: https://meta.wikimedia.org/w/index.php?title=List_of_countries_by_regional_classification&oldid=19943813 (accessed 12 April 2020).
+
+Wikipedia contributors. (2020), “ISO 3166-1 alpha-3”, Wikipedia: The Free Encyclopedia, 14 March, available at: https://en.wikipedia.org/w/index.php?title=ISO_3166-1_alpha-3&oldid=945527106 (accessed 12 April 2020).
+
+
+
+
+##

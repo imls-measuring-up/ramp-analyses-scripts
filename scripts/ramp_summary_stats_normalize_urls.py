@@ -132,7 +132,7 @@ def make_dspace_item_uri(bitstream_url):
     p = urlparse(bitstream_url)
 
     # Compile a regular expression to find the DSpace handle in the bitstream URL.
-    handle = re.compile("[0-9\?\.]+\/[0-9][0-9]+")
+    handle = re.compile("\/[0-9\?\.]+\/[0-9][0-9]+")
 
     # Search the bitstream URL for the UI type.
     xmlui = re.compile('xmlui')
@@ -211,7 +211,7 @@ def make_eprints_fedora_item_uri(pdf_url):
     p = urlparse(pdf_url)
 
     # Compile a regular expression to find the internal ID numberof the item.
-    pdf_path = re.compile("[0-9][0-9]+")
+    pdf_path = re.compile("\/[0-9][0-9]+")
     pdf_id = pdf_path.search(p.path)
 
     # Construct and return the item HTML page.
@@ -269,7 +269,7 @@ def make_fedora_ne_item_uri(pdf_url):
     """
 
     p = urlparse(pdf_url)
-    pdf_path = re.compile("neu:[a-z0-9]+")
+    pdf_path = re.compile("\/files\/neu:[a-z0-9]+")
     pdf_id = pdf_path.search(p.path)
     if pdf_id:
         return pdf_id.group()
@@ -307,8 +307,8 @@ def make_bepress_oai_url(pdf_url):
     articleSearch = articleRe.search(pdf_url)
     if contextSearch:
         if articleSearch:
-            context = contextSearch.group().strip('context=')
-            article = articleSearch.group().strip('article=')
+            context = contextSearch.group().replace('context=', '')
+            article = articleSearch.group().replace('article=', '')
             return base_url + str(context) + '-' + str(article)
 
 def make_bepress_item_uri(pdf_url):
@@ -347,8 +347,8 @@ def make_bepress_item_uri(pdf_url):
     articleSearch = articleRe.search(pdf_url)
     if contextSearch:
         if articleSearch:
-            context = contextSearch.group().strip('context=')
-            article = articleSearch.group().strip('article=')
+            context = contextSearch.group().replace('context=', '')
+            article = articleSearch.group().replace('article=', '')
             return base_url + str(context) + '-' + str(article)
 
 

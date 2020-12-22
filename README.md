@@ -1,5 +1,11 @@
 # ramp-analyses-scripts
 
+The data and code in this repository were used for the analysis and findings reported in 
+
+* Arlitsch, Kenning, Jonathan Wheeler, Minh Thi Ngoc Pham, and Nikolaus Nova
+  Parulian. 2020. "An analysis of use and performance data aggregated from 35
+  institutional repositories." _Online Information Review_. <https://doi.org/10.1108/OIR-08-2020-0328>
+
 ## Verifying the Analysis:
 
 There are two steps to reproduce the results presented and discussed in the manuscript:

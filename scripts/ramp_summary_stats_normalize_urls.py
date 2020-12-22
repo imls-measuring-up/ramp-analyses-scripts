@@ -5,7 +5,12 @@ GitHub repository URL: <https://github.com/imls-measuring-up/ramp-analyses-scrip
 This script generates summary statistics of IR search engine performance data
 as reported by Google and harvested by the RAMP application. It also cross-
 references RAMP data with manually collected data about IR to calculate
-the use ratio and other analyses described in Arlitsch et al., 2020 (in review).
+the use ratio and other analyses described in 
+
+  Arlitsch, Kenning, Jonathan Wheeler, Minh Thi Ngoc Pham, and Nikolaus Nova
+  Parulian. 2020. "An analysis of use and performance data aggregated from 35
+  institutional repositories." Online Information Review.
+  https://doi.org/10.1108/OIR-08-2020-0328.
 
 Dependencies:
 

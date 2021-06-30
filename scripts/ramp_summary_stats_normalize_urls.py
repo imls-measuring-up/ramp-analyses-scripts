@@ -416,16 +416,16 @@ fname_date = today.strftime("%Y%m%d")
 # Please comment out lines 278-282 as needed following download.
 
 # These are the file URLs.
-ramp_201901_ai = 'https://datadryad.org/stash/downloads/file_stream/331135'
-ramp_201901_pc = 'https://datadryad.org/stash/downloads/file_stream/331145'
-ramp_201902_ai = 'https://datadryad.org/stash/downloads/file_stream/331134'
-ramp_201902_pc = 'https://datadryad.org/stash/downloads/file_stream/331144'
-ramp_201903_ai = 'https://datadryad.org/stash/downloads/file_stream/331136'
-ramp_201903_pc = 'https://datadryad.org/stash/downloads/file_stream/331146'
-ramp_201904_ai = 'https://datadryad.org/stash/downloads/file_stream/331139'
-ramp_201904_pc = 'https://datadryad.org/stash/downloads/file_stream/331147'
-ramp_201905_ai = 'https://datadryad.org/stash/downloads/file_stream/331140'
-ramp_201905_pc = 'https://datadryad.org/stash/downloads/file_stream/331148'
+ramp_201901_ai = 'https://datadryad.org/stash/downloads/file_stream/237857'
+ramp_201901_pc = 'https://datadryad.org/stash/downloads/file_stream/237862'
+ramp_201902_ai = 'https://datadryad.org/stash/downloads/file_stream/237856'
+ramp_201902_pc = 'https://datadryad.org/stash/downloads/file_stream/237861'
+ramp_201903_ai = 'https://datadryad.org/stash/downloads/file_stream/237858'
+ramp_201903_pc = 'https://datadryad.org/stash/downloads/file_stream/237863'
+ramp_201904_ai = 'https://datadryad.org/stash/downloads/file_stream/237859'
+ramp_201904_pc = 'https://datadryad.org/stash/downloads/file_stream/237864'
+ramp_201905_ai = 'https://datadryad.org/stash/downloads/file_stream/237860'
+ramp_201905_pc = 'https://datadryad.org/stash/downloads/file_stream/237865'
 
 # Build a dictionary to match filenames with corresponding file URLs.
 ramp_subset = {}
@@ -441,11 +441,11 @@ ramp_subset['2019-05_RAMP_subset_country-device-info.csv'] = ramp_201905_ai
 ramp_subset['2019-05_RAMP_subset_page-clicks_v2.csv'] = ramp_201905_pc
 
 # Download the data and save to the 'ramp_data' directory.
-#for file_name, file_pointer in ramp_subset.items():
-#    r = requests.get(file_pointer, stream=True)
-#    with open(ramp_data_dir + file_name, 'wb') as dl:
-#        for chunk in r.iter_content(chunk_size=512):
-#            dl.write(chunk)
+for file_name, file_pointer in ramp_subset.items():
+    r = requests.get(file_pointer, stream=True)
+    with open(ramp_data_dir + file_name, 'wb') as dl:
+        for chunk in r.iter_content(chunk_size=512):
+            dl.write(chunk)
 
 # Create a list to hold the names of individual RAMP data files.
 # Note that only page-click data are being used here.

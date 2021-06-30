@@ -540,7 +540,9 @@ for i, r in ir_info.iterrows():
         for the output file. See "RAMP_summary_stats_documentation.md."
         """
         ir_ramp_data = construct_html_urls(ir_ramp_data, r['Platform'])
-        ir_ramp_data.to_csv(results_dir + ir + "_ramp_data.csv", index=False)
+        # Uncomment the next line to output raw RAMP data
+        # for each IR in the subset.
+        # ir_ramp_data.to_csv(results_dir + ir + "_ramp_data.csv", index=False)
         countCcdUrls = len(pd.unique(ir_ramp_data['url']))
         countItemUrls = len(pd.unique(ir_ramp_data['html_url']))
         countItemUris = len(pd.unique(ir_ramp_data['unique_item_uri']))
